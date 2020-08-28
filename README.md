@@ -40,7 +40,7 @@ You can test the service by sending a GET request to
 <http://localhost:8080/sbml4j/dbStatus>
 
 ### 5. Shutdown the system
-To shutown the system again use:
+To shutdown the system again use:
 
     docker-compose down
 
