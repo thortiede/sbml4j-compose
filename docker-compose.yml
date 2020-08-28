@@ -1,0 +1,66 @@
+version: "3.8"
+services:
+  db_setup:
+    image: alpine
+    volumes:
+      - sbml4jVolumeCompose:/db
+      - ./database_backups:/database_backups
+      - ./handover:/handover
+    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/database.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
+  db_backup:
+    image: alpine
+    volumes:
+      - sbml4jVolumeCompose:/db
+      - ./database_backups:/database_backups
+    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz database.tar.gz /db"]
+  apoc_install:
+    image: alpine
+    volumes:
+      - ./neo4j/plugins:/plugins
+    command: ["/bin/sh", "-c", "cd /plugins && wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.1.0.2/apoc-4.1.0.2-all.jar"]
+  sbml4jdatabase:
+      image: neo4j
+      volumes:
+        - sbml4jVolumeCompose:/var/lib/neo4j/data
+        - ./neo4j/plugins:/plugins
+        - ./neo4j/logs:/logs
+        - ./neo4j/conf:/var/lib/neo4j/conf
+      ports:
+        - "7474:7474"
+        - "7687:7687"
+      environment:
+        - NEO4J_dbms_security_auth__enabled=false
+        - NEO4J_dbms_memory_pagecache_size=1G
+        - NEO4J_dbms_memory_heap_initial__size=1G
+        - NEO4J_dbms_memory_heap_max__size=1G
+        - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+        - NEO4J_dbms_security_procedures_whitelist=apoc.*
+      restart: unless-stopped
+      command: ["neo4j"]
+  sbml4j:
+    image: thortiede/sbml4j
+    volumes:
+      - ./sbml4j/logs:/logs
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - SPRING_DATA_NEO4j_URI=bolt://sbml4jdatabase:7687
+      - SERVER_SERVLET_CONTEXTPATH=/sbml4j
+      - SERVER_PORT=8080
+      - VCF_DEFAULT_BASE_NETWORK_U_U_I_D=a3de028a-50e5-40eb-8cdf-9b9d7ac71058
+      - VCF_DEFAULT_MINSIZE=1
+      - VCF_DEFAULT_MAXSIZE=2
+      - VCF_DEFAULT_TERMINATEATDRUG=true
+      - VCF_DEFAULT_DIRECTION=both
+      - SBML4j_OUTPUT_HIDE_MODEL_UUIDS=false
+      - SBML4j_NETWORK_HARD_DELETE=True
+      - SBML4J_NETWORK_USE_SHARED_PATHWAY_SEARCH=false
+      - SBML4J_ANNOTATION_APPEND=True
+      - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
+    depends_on:
+      - "sbml4jdatabase"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+    sbml4jVolumeCompose:
