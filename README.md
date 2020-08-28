@@ -32,7 +32,7 @@ Start the neo4j database as well as the sbml4j service with:
 
 
 ### 4. Test the system
-You can test the service by sending a GET Request to
+You can test the service by sending a GET request to
 
 <http://localhost:8080/sbml4j/dbStatus>
 
@@ -40,17 +40,36 @@ You can test the service by sending a GET Request to
 
 There are two example network available in the database.
 Use the user 'pecax' to retrieve or derive from them.
+You can get some information on them by sending a GET request to
+
+<http://localhost:8080/sbml4j/networks>
+
+Make sure to set the **user** - header to *pecax*.
 
 ### 6. Drivergenes endpoint
 
-The /drivergenes endpoint will create an overview network for a set of genename
+The /drivergenes endpoint will create an overview network for a set of genenames
 given in the request body. The baseNetworkUUID can be omitted. The Default network
 will then be used.
 
 The user you send in the request header will be attributed to the created overview network
 and needs to be used to retrieve the network in a subsequent call.
 
-The /drivergenes endpoint returns an networkInventoryItem giving general information
+Send a POST request to:
+<http://localhost:8080/sbml4j/drivergenes>
+
+The body should be json formatted and should look something like this:
+
+    {
+      "baseNetworkUUID" : "a3de028a-50e5-40eb-8cdf-9b9d7ac71058",
+      "genes": [
+      "TP53",
+      "CYCS",
+      "PIK3CA"
+      ]
+    }
+
+The /drivergenes endpoint returns a networkInventoryItem giving general information
 about the created network. The fields "UUID" and "uuid" both hold the UUID that can be used
 to retrieve the network using the /networks endpoint.
 
