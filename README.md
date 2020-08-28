@@ -47,7 +47,15 @@ To shutown the system again use:
 either in a separate terminal window (but same directory of course)
 or use the same terminal if you ran it with *--detach*
 
-### 6. Example Data and User information
+### 6. Backup the database
+You can create a backup of the last used database. Shutdown the system then run
+
+    docker-compose up db_backup
+
+**WARNING: This will overwrite the existing database-file used in db_setup
+(Step 1 above). You need to make sure to save the original one externally yourself.**
+
+### 7. Example Data and User information
 
 There are two example networks available in the database.
 Use the user *pecax* to retrieve or derive from them.
@@ -57,7 +65,7 @@ You can get some information on them by sending a GET request to
 
 Make sure to set the *user* - header to *pecax*.
 
-### 7. Drivergenes endpoint
+### 8. Drivergenes endpoint
 
 The /drivergenes endpoint will create an overview network for a set of genenames
 given in the request body. The baseNetworkUUID can be omitted. The Default network
@@ -86,12 +94,12 @@ to retrieve the network using the /networks endpoint.
 
 For details please check the swagger documentation linked below.
 
-### 8. Contact
+### 9. Contact
 
 This project is maintained by Thorsten Tiede.
 Contact via the email provided on github and swaggerhub.
 
-### 9. More information
+### 10. More information
 
 Find more information on SBML4j here:
 <https://github.com/thortiede/sbml4j>
