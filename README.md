@@ -1,20 +1,27 @@
 Use this docker compose file to get sbml4j set up and start it using docker containers
 
 ### 1. Setup Database
-Put database backup file (database.tar.gz) in folder database_backups
-Then run the following command to extract it into the database volume for neo4j
+We provide a sample database file derived from KEGG's cancer-related pathways,
+enriched with drug-target interactions mostly derived from Drugbank.
+
+Run the following command to extract it into the database volume for neo4j.
 
     docker-compose up db_setup
 
+To use a different database for your service, replace the file
+    database.tar.gz
+in the folder database_backups prior to running the above command.
+
 ### 2. Get the required plugins
-SBML4j uses the APOC plugin for Neo4j
+SBML4j uses the APOC plugin for Neo4j. We need to download it, if not already
+done. The following command does just that.
 
     docker-compose up apoc_install
 
 ### 3. You are ready to start the service
-Starts the neo4j databse as well as the sbml4j service
+Start the neo4j database as well as the sbml4j service with:
 
-    docker-compose up sbml4j
+    docker-compose up --attach-dependencies sbml4j
 
 
 You can test the service by sending a GET Request to
