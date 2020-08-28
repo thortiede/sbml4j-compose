@@ -49,13 +49,13 @@ or use the same terminal if you ran it with *--detach*
 
 ### 6. Example Data and User information
 
-There are two example network available in the database.
-Use the user 'pecax' to retrieve or derive from them.
+There are two example networks available in the database.
+Use the user *pecax* to retrieve or derive from them.
 You can get some information on them by sending a GET request to
 
 <http://localhost:8080/sbml4j/networks>
 
-Make sure to set the **user** - header to *pecax*.
+Make sure to set the *user* - header to *pecax*.
 
 ### 7. Drivergenes endpoint
 
