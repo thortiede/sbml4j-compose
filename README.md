@@ -30,13 +30,24 @@ Start the neo4j database as well as the sbml4j service with:
 
     docker-compose up --attach-dependencies sbml4j
 
+or, to not attach the console at all:
+
+    docker-compose up --detach sbml4j
 
 ### 4. Test the system
 You can test the service by sending a GET request to
 
 <http://localhost:8080/sbml4j/dbStatus>
 
-### 5. Example Data and User information
+### 5. Shutdown the system
+To shutown the system again use:
+
+    docker-compose down
+
+either in a separate terminal window (but same directory of course)
+or use the same terminal if you ran it with *--detach*
+
+### 6. Example Data and User information
 
 There are two example network available in the database.
 Use the user 'pecax' to retrieve or derive from them.
@@ -46,7 +57,7 @@ You can get some information on them by sending a GET request to
 
 Make sure to set the **user** - header to *pecax*.
 
-### 6. Drivergenes endpoint
+### 7. Drivergenes endpoint
 
 The /drivergenes endpoint will create an overview network for a set of genenames
 given in the request body. The baseNetworkUUID can be omitted. The Default network
@@ -75,12 +86,12 @@ to retrieve the network using the /networks endpoint.
 
 For details please check the swagger documentation linked below.
 
-### 7. Contact
+### 8. Contact
 
 This project is maintained by Thorsten Tiede.
 Contact via the email provided on github and swaggerhub.
 
-### 8. More information
+### 9. More information
 
 Find more information on SBML4j here:
 <https://github.com/thortiede/sbml4j>
