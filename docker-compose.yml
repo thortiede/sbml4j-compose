@@ -56,6 +56,10 @@ services:
       - SBML4J_NETWORK_USE_SHARED_PATHWAY_SEARCH=false
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
+      - SBML4J_externalresources_mdanderson_add_md_anderson_annotation=True
+      - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
+      - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
+      - SBML4J_externalresources_mdanderson_section=Overview
     depends_on:
       - "sbml4jdatabase"
     ports:
