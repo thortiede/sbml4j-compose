@@ -60,6 +60,9 @@ services:
       - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
       - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
       - SBML4J_externalresources_mdanderson_section=Overview
+      - SBML4J_externalresources_biologicalqualifer_default-database=KEGG
+      - SBML4J_externalresources_keggdatabase_pathway-link-prefix=https://www.genome.jp/kegg-bin/show_pathway?
+      - SBML4J_externalresources_keggdatabase_pathway-search-prefix=https://www.genome.jp/dbget-bin/www_bfind_sub?dbkey=pathway&keywords=
     depends_on:
       - "sbml4jdatabase"
     ports:
