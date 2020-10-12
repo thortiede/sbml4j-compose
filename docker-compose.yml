@@ -6,7 +6,7 @@ services:
       - sbml4jVolumeCompose:/db
       - ./database_backups:/database_backups
       - ./handover:/handover
-    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/database.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
+    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.31.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
   db_backup:
     image: alpine
     volumes:
@@ -46,17 +46,18 @@ services:
       - SPRING_DATA_NEO4j_URI=bolt://sbml4jdatabase:7687
       - SERVER_SERVLET_CONTEXTPATH=/sbml4j
       - SERVER_PORT=8080
-      - OVERVIEWNETWORK_DEFAULT_BASE_NETWORK_U_U_I_D=a3de028a-50e5-40eb-8cdf-9b9d7ac71058
+      - OVERVIEWNETWORK_DEFAULT_BASE_NETWORK_U_U_I_D=83621fb1-48a0-4812-adb8-efbf362917d6
       - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
       - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
       - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=true
       - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
-      - SBML4j_OUTPUT_HIDE_MODEL_UUIDS=false
-      - SBML4j_NETWORK_HARD_DELETE=True
-      - SBML4J_NETWORK_USE_SHARED_PATHWAY_SEARCH=false
+      - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=false
+      - SBML4J_NETWORK_HARD-DELETE=True
+      - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
-      - SBML4J_externalresources_mdanderson_add_md_anderson_annotation=True
+      - SBML4J_annotation_annotate-with-links=True
+      - SBML4J_externalresources_mdanderson_add-md-anderson-annotation=True
       - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
       - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
       - SBML4J_externalresources_mdanderson_section=Overview
