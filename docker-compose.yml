@@ -12,7 +12,7 @@ services:
     volumes:
       - sbml4jVolumeCompose:/db
       - ./database_backups:/database_backups
-    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz database.tar.gz /db"]
+    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz sbml4j_pecax_0.0.31.tar.gz /db"]
   apoc_install:
     image: alpine
     volumes:
