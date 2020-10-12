@@ -5,7 +5,7 @@ or no version at all (in which case the latest version will be fetched on first 
 
 1. alpine
 2. neo4j
-3. thortiede/sbml4j
+3. thortiede/sbml4j:0.0.31
 
 ### 1. Setup Database
 We provide a sample database file derived from KEGG's cancer-related pathways,
@@ -65,17 +65,18 @@ You can get some information on them by sending a GET request to
 
 Make sure to set the *user* - header to *pecax*.
 
-### 8. Drivergenes endpoint
+### 8. Overview endpoint
 
-The /drivergenes endpoint will create an overview network for a set of genenames
+The /overview endpoint will create an overview network for a set of genenames
 given in the request body. The baseNetworkUUID can be omitted. The Default network
-will then be used.
+will then be used. 
+Likewise the networkName can be ommitted, whereas the annotationName has to be provided.
 
 The user you send in the request header will be attributed to the created overview network
 and needs to be used to retrieve the network in a subsequent call.
 
 Send a POST request to:
-<http://localhost:8080/sbml4j/drivergenes>
+<http://localhost:8080/sbml4j/overview>
 
 The body should be json formatted and should look something like this:
 
@@ -85,10 +86,12 @@ The body should be json formatted and should look something like this:
       "TP53",
       "CYCS",
       "PIK3CA"
-      ]
+      ],
+      "annotationName": "Drivergene",
+      "networkName": "Drivergene network"
     }
 
-The /drivergenes endpoint returns a networkInventoryItem giving general information
+The /overview endpoint returns a networkInventoryItem giving general information
 about the created network. The fields "UUID" and "uuid" both hold the UUID that can be used
 to retrieve the network using the /networks endpoint.
 
