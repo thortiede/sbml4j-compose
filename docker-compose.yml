@@ -6,7 +6,7 @@ services:
       - sbml4jVolumeCompose:/db
       - ./database_backups:/database_backups
       - ./handover:/handover
-    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.31.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
+    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.32.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
   db_backup:
     image: alpine
     volumes:
@@ -31,14 +31,14 @@ services:
       environment:
         - NEO4J_dbms_security_auth__enabled=false
         - NEO4J_dbms_memory_pagecache_size=1G
-        - NEO4J_dbms_memory_heap_initial__size=4G
-        - NEO4J_dbms_memory_heap_max__size=4G
+        - NEO4J_dbms_memory_heap_initial__size=2G
+        - NEO4J_dbms_memory_heap_max__size=2G
         - NEO4J_dbms_security_procedures_unrestricted=apoc.*
         - NEO4J_dbms_security_procedures_whitelist=apoc.*
       restart: unless-stopped
       command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:0.0.31
+    image: thortiede/sbml4j:0.0.32
     volumes:
       - ./sbml4j/logs:/logs
     environment:
