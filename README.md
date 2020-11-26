@@ -108,4 +108,4 @@ Find more information on SBML4j here:
 <https://github.com/thortiede/sbml4j>
 
 Learn about the SBML4j API at Swagger:
-<https://app.swaggerhub.com/apis-docs/tiede/sbml4j/1.1.2>
+<https://app.swaggerhub.com/apis-docs/tiede/sbml4j/1.1.4>
