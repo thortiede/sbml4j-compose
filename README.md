@@ -5,7 +5,7 @@ or no version at all (in which case the latest version will be fetched on first 
 
 1. alpine
 2. neo4j
-3. thortiede/sbml4j:0.0.31
+3. thortiede/sbml4j
 
 ### 1. Setup Database
 We provide a sample database file derived from KEGG's cancer-related pathways,
@@ -69,7 +69,7 @@ Make sure to set the *user* - header to *pecax*.
 
 The /overview endpoint will create an overview network for a set of genenames
 given in the request body. The baseNetworkUUID can be omitted. The Default network
-will then be used. 
+will then be used.
 Likewise the networkName can be ommitted, whereas the annotationName has to be provided.
 
 The user you send in the request header will be attributed to the created overview network
