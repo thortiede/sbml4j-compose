@@ -36,7 +36,7 @@ services:
       - NEO4J_dbms_security_procedures_unrestricted=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
       - NEO4J_dbms_security_procedures_whitelist=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
     restart: unless-stopped
-      command: ["neo4j"]
+    command: ["neo4j"]
   sbml4j:
     image: thortiede/sbml4j:latest
     container_name: sbml4j
