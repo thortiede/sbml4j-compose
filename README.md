@@ -1,10 +1,10 @@
 Use this docker compose file to get sbml4j set up and start it using docker containers.
 
-This project uses the following docker images, make sure you have the latest version,
-or no version at all (in which case the latest version will be fetched on first startup):
+This project uses the following docker images, make sure you have the given version
+or the latest version, if none is given or no version at all (in which case the latest version will be fetched on first startup):
 
 1. alpine
-2. neo4j
+2. neo4j:4.1
 3. thortiede/sbml4j
 
 ### 1. Setup Database
