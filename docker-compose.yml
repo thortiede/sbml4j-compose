@@ -5,13 +5,13 @@ services:
     volumes:
       - sbml4j_network_db:/db
       - ./database_backups:/database_backups
-    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.32.tar.gz --strip 1"]
+    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/0.1.18_pathwaysOnly.tar.gz --strip 1"]
   db_backup:
     image: alpine
     volumes:
       - sbml4j_network_db:/db
       - ./database_backups:/database_backups
-    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz sbml4j_pecax_0.0.32.tar.gz /db"]
+    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz 0.1.18_pathwaysOnly.tar.gz /db"]
   apoc_install:
     image: alpine
     volumes:
@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:latest
+    image: thortiede/sbml4j:0.1.18
     container_name: sbml4j
     volumes:
       - ./sbml4j/logs:/logs
@@ -53,9 +53,14 @@ services:
       - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
       - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=True
       - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
+      - sbml4j.context.minSize=1
+      - sbml4j.context.maxSize=3
+      - sbml4j.context.terminateAt=Drug
+      - sbml4j.context.direction=both
       - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=False
       - SBML4J_NETWORK_HARD-DELETE=True
       - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
+      - sbml4j.network.public-user=sbml4j
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
       - SBML4J_annotation_annotate-with-links=True
