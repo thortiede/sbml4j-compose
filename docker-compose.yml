@@ -5,13 +5,13 @@ services:
     volumes:
       - sbml4j_network_db:/db
       - ./database_backups:/database_backups
-    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/0.1.18_pathwaysOnly.tar.gz --strip 1"]
+    command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/KEGG54-97.0-pwCollection.tar.gz --strip 1"]
   db_backup:
     image: alpine
     volumes:
       - sbml4j_network_db:/db
       - ./database_backups:/database_backups
-    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz 0.1.18_pathwaysOnly.tar.gz /db"]
+    command: ["/bin/sh", "-c", "cd /database_backups && tar cfz KEGG54-97.0-mappings.tar.gz /db"]
   apoc_install:
     image: alpine
     volumes:
@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:0.1.18
+    image: thortiede/sbml4j:0.2.9
     container_name: sbml4j
     volumes:
       - ./sbml4j/logs:/logs
@@ -57,13 +57,22 @@ services:
       - sbml4j.context.maxSize=3
       - sbml4j.context.terminateAt=Drug
       - sbml4j.context.direction=both
-      - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=False
+      - SBML4J_OUTPUT_HIDE_MODEL_U-U-I-DS=False
       - SBML4J_NETWORK_HARD-DELETE=True
+      - SBML4j_FORCE-DELETE-OF-PUBLIC-NETWORK=False
       - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
       - sbml4j.network.public-user=sbml4j
+      - sbml4j.network.show-inactive-networks=false
+      - sbml4j.network.allow-inactive-duplicates=true
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
       - SBML4J_annotation_annotate-with-links=True
+      - sbml4j.csv.matching-column-name[0]=gene name
+      - sbml4j.csv.matching-column-name[1]=genename
+      - sbml4j.csv.matching-column-name[2]=gene symbol
+      - sbml4j.csv.matching-column-name[3]=genesymbol
+      - sbml4j.csv.matching-column-name[4]=gene
+      - sbml4j.csv.matching-column-name[5]=symbol 
       - SBML4J_externalresources_mdanderson_add-md-anderson-annotation=True
       - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
       - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
