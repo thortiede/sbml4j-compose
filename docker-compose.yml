@@ -2,18 +2,18 @@ version: "3.8"
 services:
   sbml4j_db_setup:
     image: alpine
-      volumes:
-        - sbml4j_neo4j_vol:/vol
-        - ./neo4j_data:/data
-        - ./scripts:/script
-      command: ["/bin/sh", "-c", "cd /script && chmod a+x db_setup.sh && ./db_setup.sh"]
+    volumes:
+      - sbml4j_neo4j_vol:/vol
+      - ./neo4j_data:/data
+      - ./scripts:/script
+    command: ["/bin/sh", "-c", "cd /script && chmod a+x db_setup.sh && ./db_setup.sh"]
 
   sbml4j_db_backup:
     image: alpine
-      volumes:
-        - sbml4j_neo4j_vol:/vol
-        - ./neo4j_data:/neo4j_data
-      command: ["/bin/sh", "-c", "cd /neo4j_data && tar cfz sbml4j_database_backup.tar.gz /vol/data/"]
+    volumes:
+      - sbml4j_neo4j_vol:/vol
+      - ./neo4j_data:/neo4j_data
+    command: ["/bin/sh", "-c", "cd /neo4j_data && tar cfz sbml4j_database_backup.tar.gz /vol/data/"]
 
   sbml4j_api_doc_setup:
     image: alpine
