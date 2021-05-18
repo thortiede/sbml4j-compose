@@ -57,7 +57,7 @@ services:
     image: thortiede/sbml4j:0.2.15
     container_name: sbml4j
     volumes:
-      - sbml4j_logs:/logs
+      - sbml4j_service_vol:/logs
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - SPRING_DATA_NEO4j_URI=bolt://sbml4jdb:7687
@@ -69,7 +69,7 @@ services:
       - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
       - OVERVIEWNETWORK_DEFAULT_TERMINATEAT=Drugtarget
       - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
-      - SBML4J_GENERAL_API-DOCUMENTATION-URL=http://192.168.0.69:9080/
+      - SBML4J_GENERAL_API-DOCUMENTATION-URL=http://192.168.0.185:9080/
       - SBML4J_context_minSize=1
       - SBML4J_context_maxSize=3
       - SBML4J_context_terminateAt=
@@ -111,6 +111,6 @@ services:
     restart: on-failure
 
 volumes:
-    sbml4j_logs:
+    sbml4j_service_vol:
     sbml4j_api_doc_vol:
     sbml4j_neo4j_vol:
