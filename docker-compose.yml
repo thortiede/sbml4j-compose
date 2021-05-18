@@ -6,7 +6,8 @@ services:
       - sbml4j_neo4j_vol:/vol
       - ./neo4j_data:/data
       - ./scripts:/script
-    command: ["/bin/sh", "-c", "cd /script && chmod a+x db_setup.sh && ./db_setup.sh"]
+      - ./conf:/conf
+    command: ["/bin/sh", "-c", "cd /script && chmod a+x db_setup.sh && ./db_setup.sh ${db_backup}"]
 
   sbml4j_db_backup:
     image: alpine
@@ -32,7 +33,7 @@ services:
       - "9080:8080"
 
   sbml4jdatabase:
-    image: neo4j:4.1
+    image: neo4j:4.1.6
     container_name: sbml4jdb
     volumes:
       - sbml4j_neo4j_vol:/vol
@@ -41,19 +42,19 @@ services:
       - "7687:7687"
     environment:
       - NEO4J_CONF=/vol/conf
-      - NEO4J_dbms_security_auth__enabled=false
-      - NEO4J_dbms_memory_pagecache_size=1G
-      - NEO4J_dbms_memory_heap_initial__size=2G
-      - NEO4J_dbms_memory_heap_max__size=2G
-      - NEO4J_dbms_security_procedures_unrestricted=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
-      - NEO4J_dbms_security_procedures_whitelist=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
-      - NEO4J_directories_plugins=/vol/plugins
-      - NEO4J_directories_logs=/vol/logs
-      - NEO4J_directories_data=/vol/data
+      #- NEO4J_dbms_security_auth__enabled=false
+      #- NEO4J_dbms_memory_pagecache_size=1G
+      #- NEO4J_dbms_memory_heap_initial__size=2G
+      #- NEO4J_dbms_memory_heap_max__size=2G
+      #- NEO4J_dbms_security_procedures_unrestricted=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
+      #- NEO4J_dbms_security_procedures_whitelist=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
+      #- NEO4J_dbms_directories_plugins=/vol/plugins
+      #- NEO4J_dbms_directories_logs=/vol/logs
+      #- NEO4J_dbms_directories_data=/vol/data
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:0.2.14
+    image: thortiede/sbml4j:0.2.15
     container_name: sbml4j
     volumes:
       - sbml4j_logs:/logs
@@ -88,11 +89,13 @@ services:
       - SBML4J_csv_matching-column-name[0]=gene name
       - SBML4J_csv_matching-column-name[1]=genename
       - SBML4J_csv_matching-column-name[2]=gene.name
-      - SBML4J_csv_matching-column-name[3]=gene symbol
-      - SBML4J_csv_matching-column-name[4]=genesymbol
-      - SBML4J_csv_matching-column-name[5]=gene.symbol
-      - SBML4J_csv_matching-column-name[6]=gene
-      - SBML4J_csv_matching-column-name[7]=symbol 
+      - SBML4J_csv_matching-column-name[3]=gene_name
+      - SBML4J_csv_matching-column-name[4]=gene symbol
+      - SBML4J_csv_matching-column-name[5]=genesymbol
+      - SBML4J_csv_matching-column-name[6]=gene.symbol
+      - SBML4J_csv_matching-column-name[7]=gene_symbol
+      - SBML4J_csv_matching-column-name[8]=gene
+      - SBML4J_csv_matching-column-name[9]=symbol 
       - SBML4J_externalresources_mdanderson_add-md-anderson-annotation=True
       - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
       - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/

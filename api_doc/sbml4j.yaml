@@ -14,7 +14,7 @@ info:
 servers:
 # Demo Server
   - description: SBML4j KEGG-97.0 61 cancer related pathways demonstration server (content reset every day at midnight GMT+2)
-    url: http://127.0.0.1:8080/sbml4j
+    url: http://192.168.0.69:8080/sbml4j
 tags:
   - name: networks
     description: Everything about networks

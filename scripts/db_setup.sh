@@ -1,5 +1,6 @@
 #!/bin/sh
 
+db_backup=$1
 # 1. create the /vol dir
 mkdir -p /vol
 
@@ -14,15 +15,15 @@ mkdir -p /vol/logs
 
 # 4. create /vol/conf
 mkdir -p /vol/conf
-touch /vol/conf/neo4j.conf
+[ -e /conf/neo4j.conf ] && cp /conf/neo4j.conf /vol/conf
 
 # 5. check if data is there and copy it
 cd /
 mkdir -p /vol/data
-[ -e /data/sbml4j_database_backup.tar.gz ] && tar x -C /vol/data -z -f /data/sbml4j_database_backup.tar.gz --strip 1  
+[ -e /data/${db_backup} ] && tar x -C /vol/data -z -f /data/${db_backup} --strip 1  
 
 # 6. Fix permission settings
-chown -R 7474:7474 vol
+chown -R 7474:7474 /vol
 chmod 600 /vol/conf/neo4j.conf
 
 
