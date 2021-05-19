@@ -18,7 +18,7 @@ function show_usage() {
   echo "     Install prerequisits for SBML4J."
   echo "     This will recreate the volumes used for SBML4J, the (empty) neo4j database and the api documentation using the default api-documentation file ${default_api_doc} found in the api_doc subfolder."
   echo "  -a : {argument} :"
-  echo "     Used only in conjunction with -i or -i to provide the filename of an alternative api-documentation file, which has to be placed in the api_doc subfolder. "
+  echo "     Used only in conjunction with -i to provide the filename of an alternative api-documentation file, which has to be placed in the api_doc subfolder. "
   echo "  -s {argument} :"
   echo "     Setup the neo4j database from the database dumps from the files named by the {argument}"
   echo "  -p {argument} :"
@@ -26,16 +26,18 @@ function show_usage() {
   echo "     Use in conjuction with the -b, -i, -s flags."
   echo " "
   echo "Examples:"
-  echo "${0} -i sbml4j.yaml"
-  echo "   This will (re)-create the volumes for SBML4J and use sbml4j.yaml as source for the api page"
+  echo "${0} -i :"
+  echo "   This will (re)-create the volumes for SBML4J and use the default api definition file ${default_api_def} as source for the api page"
+  echo "${0} -i -a myapidef.yaml :"
+  echo "   This will (re)-create the volumes for SBML4J and use the provided api definition file myapidef.yaml as source for the api page"
   echo "${0} -b mydbbackup"
   echo "   This will create a database dump of the neo4j and system database in the files mydbbackup-neo4j.dump and mydbbackup-system.dump respectively"
   echo "${0} -s mydbbackup"
   echo "   This will load a database dump from the neo4j and system database dump files mydbbackup-neo4j.dump and mydbbackup-system.dump."
   echo "   WARNING: Any data currently stored in the database will be overwritten"
-  echo "${0} -i sbml4j.yaml -s mydbbackup"
+  echo "${0} -i -s mydbbackup"
   echo "   This will (re-)create the volumes for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
-  echo "${0} -i sbml4j.yaml -s mydbbackup -p my-compose"
+  echo "${0} -i -s mydbbackup -p my-compose"
   echo "   This will (re-)create the volumes with names my-compose_sbml4j_neo4j_vol instead of the default name sbml4j-compose_sbml4j_neo4j_vol for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
   echo "   This needs to be used when you want to use these volumes in a different compose setup"
 }
@@ -120,12 +122,34 @@ do
           i=i+10
           ;;
        p) prefix_name=${OPTARG}
-          prefix_set=True
+          is_prefix_set=True
           ;;
    esac
 done
 
 echo $i
+
+function check_api_def() {
+  # Do we have a custom api defintion file
+  if [ "$is_custom_api_def" = True ]
+    then
+      echo "Using custom API definition file ${api_def}"
+    else
+      echo "Using default API defintion file ${default_api_def}"
+      api_def=${default_api_def}
+   fi
+}
+
+function check_prefix_name() {
+  # Do we have a custom prefix set
+  if [ "$is_prefix_set" = True ]
+    then
+      echo "Using custom prefix name ${prefix_name}"
+    else
+      echo "Using default prefix name ${default_volume_prefix}"
+      prefix_name=$default_volume_prefix
+  fi
+}
 
 if [ "$i" -lt "1" ]
    then
@@ -135,52 +159,30 @@ if [ "$i" -lt "1" ]
 elif [ "$i" -lt "10" ]
    then
      echo "Performing installation of prerequisits for running sbml4j"
-     if [ "$is_custom_api_def" = True ]
-        then
-          echo "Using custom API definition file ${api_def}"
-        else
-          echo "Using default API defintion file ${default_api_def}"
-          api_def=${default_api_def}
-     fi
-     if [ "$prefix_set" = True ]
-        then
-	  echo "Prefix is: ${prefix_name}"
-          install $api_def $prefix_name
-        else
-          install $api_def $default_volume_prefix
-     fi
+     check_api_def
+     check_prefix_name
+     install $api_def $prefix_name
      exit
 elif [ "$i" -lt "11" ]
    then
      echo "Performing database setup from file: $backup_name"
-     if [ "$prefix_set" = True ]
-        then
-          setup_db $backup_name $prefix_name
-        else
-          setup_db $backup_name $default_volume_prefix
-     fi
+     check_prefix_name  
+     setup_db $backup_name $prefix_name
+     exit
 elif [ "$i" -lt "12" ]
    then
+     echo "Performing installation of prerequisits for running sbml4j"
+     check_api_def
+     check_prefix_name
+     install $api_def $prefix_name
+     echo "Restoring database state from backup files with base-name: ${backup_name}"
+     setup_db $backup_name $prefix_name
      exit
-     if [ "$prefix_set" = True ]
-        then
-          echo "Performing installation of prerequisits for running sbml4j with api definition file: $api_def"
-          install $api_def $prefix_name
-          setup_db $backup_name $prefix_name
-        else
-          echo "Performing database setup from file: $backup_name"
-          install $api_def $default_volume_prefix
-          setup_db $backup_name $default_volume_prefix
-     fi
 elif [ "$i" -lt "101" ]
    then
-     echo "Performing database backup into file: $backup_name"
-     if [ "$prefix_set" = True ]
-        then
-          backup_db $backup_name $prefix_name
-        else
-          backup_db $backup_name $default_volume_prefix
-     fi
+     echo "Performing database backup into files with base-name: $backup_name"
+     check_prefix_name
+     backup_db $backup_name $prefix_name
      exit
 fi
          
