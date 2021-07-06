@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Default volume name should be prefixed with sbml4j-compose
-default_volume_prefix=sbml4j-compose
+# Default volume name should be prefixed with the folder name
+default_volume_prefix="$(echo ${PWD##*/} | tr '[A-Z]' '[a-z]')"
 # Default api defintion file name
 default_api_def=sbml4j.yaml
 
 function show_usage() {
   echo "Usage: "
-  echo "${0} -h | -b | -i | -s | -p {argument}"
+  echo "${0} -h | -b | -i | -a | -r | -p {argument}"
   echo "Details:"
   echo "This script is used to either setup the SBML4J volumes, setup the database from database dumps, or backup the databases into a database dump."
-  echo "You can either use any one option alone, or use the -i and -s options together."
+  echo "You can either use any one option alone, or use the -i and -r options together."
   echo "  -h : Print this help"
   echo "  -b {argument} :"
   echo "     Backup the current database into the backup files named by the {argument}"
@@ -19,8 +19,8 @@ function show_usage() {
   echo "     This will recreate the volumes used for SBML4J, the (empty) neo4j database and the api documentation using the default api-documentation file ${default_api_doc} found in the api_doc subfolder."
   echo "  -a : {argument} :"
   echo "     Used only in conjunction with -i to provide the filename of an alternative api-documentation file, which has to be placed in the api_doc subfolder. "
-  echo "  -s {argument} :"
-  echo "     Setup the neo4j database from the database dumps from the files named by the {argument}"
+  echo "  -r {argument} :"
+  echo "     Restore the neo4j database from the database dumps in the files with prefix given by the {argument}"
   echo "  -p {argument} :"
   echo "     Use {argument} as prefix for the volumes created, i.e. argument_sbml4j_service_vol"
   echo "     Use in conjuction with the -b, -i, -s flags."
@@ -32,12 +32,12 @@ function show_usage() {
   echo "   This will (re)-create the volumes for SBML4J and use the provided api definition file myapidef.yaml as source for the api page"
   echo "${0} -b mydbbackup"
   echo "   This will create a database dump of the neo4j and system database in the files mydbbackup-neo4j.dump and mydbbackup-system.dump respectively"
-  echo "${0} -s mydbbackup"
+  echo "${0} -r mydbbackup"
   echo "   This will load a database dump from the neo4j and system database dump files mydbbackup-neo4j.dump and mydbbackup-system.dump."
   echo "   WARNING: Any data currently stored in the database will be overwritten"
-  echo "${0} -i -s mydbbackup"
+  echo "${0} -i -r mydbbackup"
   echo "   This will (re-)create the volumes for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
-  echo "${0} -i -s mydbbackup -p my-compose"
+  echo "${0} -i -r mydbbackup -p my-compose"
   echo "   This will (re-)create the volumes with names my-compose_sbml4j_neo4j_vol instead of the default name sbml4j-compose_sbml4j_neo4j_vol for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
   echo "   This needs to be used when you want to use these volumes in a different compose setup"
 }
@@ -77,9 +77,18 @@ function install() {
     docker run --rm --detach --mount type=volume,src=${prefix_name}_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
 }
 
+function ensure_db_backups_folder_exists() {
+    if [ ! -d "${PWD}/db_backups" ]
+      then
+        echo "Directory for database backups not found. Creating directory with name 'db_backups' in current folder ${PWD}"
+        mkdir -p ${PWD}/db_backups
+    fi
+}
+
 function setup_db() {
     backup_base_name=$1
     prefix_name=$2
+    ensure_db_backups_folder_exists
     # Start neo4j for restoring the neo4j backup (twice: one neo4j, one system)
     docker run --interactive --tty --rm --publish=7474:7474 --publish=7687:7687 --mount type=volume,src=${prefix_name}_sbml4j_neo4j_vol,dst=/vol --mount type=bind,src=$PWD/db_backups,dst=/backups --user="7474:7474" --env NEO4J_CONF=/vol/conf neo4j:4.1.6 neo4j-admin load --from=/backups/${backup_base_name}-neo4j.dump --database=neo4j --force    
 # 
@@ -90,8 +99,8 @@ function setup_db() {
 function backup_db() {
     backup_base_name=$1
     prefix_name=$2
+    ensure_db_backups_folder_exists 
     # Start neo4j for backing upthe neo4j database (twice: one neo4j, one system)
-    #
     docker run --interactive --tty --rm --publish=7474:7474 --publish=7687:7687 --mount type=volume,src=${prefix_name}_sbml4j_neo4j_vol,dst=/vol --mount type=bind,src=$PWD/db_backups,dst=/backups --user="7474:7474" --env NEO4J_CONF=/vol/conf neo4j:4.1.6 neo4j-admin dump --database=neo4j --to=/backups/${backup_base_name}-neo4j.dump 
 
     docker run --interactive --tty --rm --publish=7474:7474 --publish=7687:7687 --mount type=volume,src=${prefix_name}_sbml4j_neo4j_vol,dst=/vol --mount type=bind,src=$PWD/db_backups,dst=/backups --user="7474:7474" --env NEO4J_CONF=/vol/conf neo4j:4.1.6 neo4j-admin dump --database=system --to=/backups/${backup_base_name}-system.dump 
@@ -99,7 +108,7 @@ function backup_db() {
 
 declare -i i=0
 
-while getopts a:hb:is:p: flag
+while getopts a:hb:ir:p: flag
 do
    case "${flag}" in
        a) api_def=${OPTARG}
@@ -116,7 +125,7 @@ do
        i) do_install=True
           i=i+1
           ;;
-       s) backup_name=${OPTARG}
+       r) backup_name=${OPTARG}
           do_setup=True
           #echo "Performing database setup from file: $backup_name"
           i=i+10
@@ -155,34 +164,38 @@ if [ "$i" -lt "1" ]
    then
      echo "No argument given. Please give one or two arguments."
      show_usage
-     exit 
+     exit 0
 elif [ "$i" -lt "10" ]
    then
      echo "Performing installation of prerequisits for running sbml4j"
      check_api_def
      check_prefix_name
      install $api_def $prefix_name
-     exit
+     echo "Successfully installed prerequisists for running sbml4j."
+     exit 0
 elif [ "$i" -lt "11" ]
    then
-     echo "Performing database setup from file: $backup_name"
+     echo "Restoring database from dumps: $backup_name-neo4j.dump and $backup_name-system.dump."
      check_prefix_name  
      setup_db $backup_name $prefix_name
-     exit
+     echo "Successfully restored database."
+     exit 0
 elif [ "$i" -lt "12" ]
    then
      echo "Performing installation of prerequisits for running sbml4j"
      check_api_def
      check_prefix_name
      install $api_def $prefix_name
-     echo "Restoring database state from backup files with base-name: ${backup_name}"
+     echo "Restoring database from dumps: $backup_name-neo4j.dump and $backup_name-system.dump."
      setup_db $backup_name $prefix_name
-     exit
+     echo "Successfully installed prerequisits and resored database state."
+     exit 0
 elif [ "$i" -lt "101" ]
    then
-     echo "Performing database backup into files with base-name: $backup_name"
+     echo "Performing database backup into dump-files $backup_name-neo4j.dump and $backup_name-system.dump."
      check_prefix_name
      backup_db $backup_name $prefix_name
+     echo "Successfully created database backup into dumps: $backup_name-neo4j.dump and $backup_name-system.dump." 
      exit
 fi
          

@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:0.2.15
+    image: thortiede/sbml4j:1.0
     container_name: sbml4j
     volumes:
       - sbml4j_service_vol:/logs
@@ -64,12 +64,12 @@ services:
       #- SPRING_DATA_NEO4j_AUTO-INDEX=update
       - SERVER_SERVLET_CONTEXTPATH=/sbml4j
       - SERVER_PORT=8080
-      - OVERVIEWNETWORK_DEFAULT_BASE-NETWORK-NAME=PeCaX-Base
+      - OVERVIEWNETWORK_DEFAULT_BASE-NETWORK-NAME=Overview-Base
       - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
       - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
       - OVERVIEWNETWORK_DEFAULT_TERMINATEAT=Drugtarget
       - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
-      - SBML4J_GENERAL_API-DOCUMENTATION-URL=http://192.168.0.185:9080/
+      - SBML4J_GENERAL_API-DOCUMENTATION-URL=http://localhost:9080/
       - SBML4J_context_minSize=1
       - SBML4J_context_maxSize=3
       - SBML4J_context_terminateAt=
@@ -81,8 +81,8 @@ services:
       - SBML4J_NETWORK_DELETE-DERIVED=True
       - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
       - SBML4J_NETWORK_PUBLIC-USER=sbml4j
-      - SBML4J_NETWORK_SHOW-INACTIVE-NETWORKS=false
-      - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=true
+      - SBML4J_NETWORK_SHOW-INACTIVE-NETWORKS=False
+      - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=True
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
       - SBML4J_ANNOTATION_ANNOTATE-WITH-LINKS=True
