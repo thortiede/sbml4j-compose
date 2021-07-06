@@ -52,25 +52,25 @@ This will show you the help information of the provided script, giving details o
 
 In case you are not on a Microsoft(R) Windows(R)-based operating system, this install script will not work for you.
 Unfortunately at this time we do not provide a pre-built installation script for Microsoft(R) Windows(R) or other non-linux based operating systems.
-For now your only option is to manually edit and run the $docker run$ commands needed:
+For now your only option is to manually edit and run the *docker run* commands needed:
 
 1. Setup the volume for the neo4j database (Replace the ${PWD} directives with your local folders and the ${prefix_name} by the current folder in all small letters (i.e. sbml4j-compose)) 
 
-   docker run --rm --detach --mount type=bind,src=${PWD}/scripts,dst=/scripts --mount type=bind,src=${PWD}/conf,dst=/conf --mount type=volume,src=${prefix_name}\_sbml4j_neo4j_vol,dst=/vol alpine /scripts/setup_neo4j.sh
+    docker run --rm --detach --mount type=bind,src=${PWD}/scripts,dst=/scripts --mount type=bind,src=${PWD}/conf,dst=/conf --mount type=volume,src=${prefix_name}\_sbml4j_neo4j_vol,dst=/vol alpine /scripts/setup_neo4j.sh
 
-2. Setup the volume for the api-documentation page (again replace as above, and in addition replace ${api_def} with $sbml4j.yaml$ or your custom api-definition file if you made changes):
+2. Setup the volume for the api-documentation page (again replace as above, and in addition replace ${api_def} with *sbml4j.yaml* or your custom api-definition file if you made changes):
 
-   docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}\_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
+    docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}\_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
 
 3. Setup the volume for the sbml4j service (replace as above)
 
-   docker run --rm --detach --mount type=volume,src=${prefix_name}\_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
+    docker run --rm --detach --mount type=volume,src=${prefix_name}\_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
 
 This should leave you with three volumes prefixed with the folder-name in lower-case (i.e. sbml4j-compose), which is all you need to start the service.
 
 If you have trouble completing this step, feel free to reach out to us via the Issue Tracker here on github.
 We are happy to help you troubleshoot.
-If you are willing to help implement a Windows(R) compatible version of the $sbml4j.sh$ script let us know and we are happy to get you started in contributing to this project.
+If you are willing to help implement a Windows(R) compatible version of the *sbml4j.sh* script let us know and we are happy to get you started in contributing to this project.
 
 
 ### 2. Starting and stopping the service
@@ -102,14 +102,14 @@ You can create a backup of the last used database. Shutdown the system then run:
 
     ./sbml4j.sh -b myname
 
-This will create two dump files in the local $db_backups$ directory that are prefixed with $myname$
+This will create two dump files in the local *db_backups* directory that are prefixed with *myname*
 
 ### 5. Restore a previously save database backup
 To restore a database backup you created earlier, shutodwn the system and run:
 
     ./sbml4j.sh -r myname
 
-This will overwrite the current database with the dump found in the backups prefixed with $myname$
+This will overwrite the current database with the dump found in the backups prefixed with *myname*
 
 ### 6. API information
 Once running the sbml4j-compose services provide an interactive API-Documentation to try out the various features and learn about the options.
@@ -117,7 +117,7 @@ You can navigate to this swagger-based documentation by visiting the following u
 
     http://localhost:8080/sbml4j/api
 
-When you at one point have loaded your database and want to enable easier use of this page, you can copy the provided $sbml4j.yaml$ api defintion file to create your own version.
+When you at one point have loaded your database and want to enable easier use of this page, you can copy the provided *sbml4j.yaml* api defintion file to create your own version.
 In there replace the uuids of the examples with actual uuids of your networks in the database to make the examples work out-of-box.
 Be sure to provide your custom api definition file on setting up the volumes and remember to first create backup of your database.
 After setting up the new environment, you can restore your backup and your /api endpoint should now work with your own database.
@@ -392,7 +392,7 @@ Now your installation of SBML4j should contain the same base network-database th
 > https://sbml4j.informatik.uni-tuebingen.de
 
 
-####$ 7.9. Save the network database to reset your networks in the future
+#### 7.9. Save the network database to reset your networks in the future
 Before backing up the network database you need to stop the service with
 
     docker-compose down
