@@ -56,15 +56,15 @@ For now your only option is to manually edit and run the *docker run* commands n
 
 1. Setup the volume for the neo4j database (Replace the ${PWD} directives with your local folders and the ${prefix_name} by the current folder in all small letters (i.e. sbml4j-compose)) 
 
-    docker run --rm --detach --mount type=bind,src=${PWD}/scripts,dst=/scripts --mount type=bind,src=${PWD}/conf,dst=/conf --mount type=volume,src=${prefix_name}\_sbml4j_neo4j_vol,dst=/vol alpine /scripts/setup_neo4j.sh
+        docker run --rm --detach --mount type=bind,src=${PWD}/scripts,dst=/scripts --mount type=bind,src=${PWD}/conf,dst=/conf --mount type=volume,src=${prefix_name}\_sbml4j_neo4j_vol,dst=/vol alpine /scripts/setup_neo4j.sh
 
 2. Setup the volume for the api-documentation page (again replace as above, and in addition replace ${api_def} with *sbml4j.yaml* or your custom api-definition file if you made changes):
 
-    docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}\_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
+        docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}\_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
 
 3. Setup the volume for the sbml4j service (replace as above)
 
-    docker run --rm --detach --mount type=volume,src=${prefix_name}\_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
+        docker run --rm --detach --mount type=volume,src=${prefix_name}\_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
 
 This should leave you with three volumes prefixed with the folder-name in lower-case (i.e. sbml4j-compose), which is all you need to start the service.
 
