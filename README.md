@@ -91,17 +91,17 @@ To shutdown the system again use:
 either in a separate terminal window (but same directory of course)
 or use the same terminal if you ran it with *--detach*
 
-### 3. Backup the database
+### 3. Test the system
+You can test the service by sending a GET request to
+
+<http://localhost:8080/sbml4j/dbStatus>
+
+### 4. Backup the database
 You can create a backup of the last used database. Shutdown the system then run:
 
     ./sbml4j.sh -b myname
 
 This will create two dump files in the local $db_backups$ directory that are prefixed with $myname$
-
-### 4. Test the system
-You can test the service by sending a GET request to
-
-<http://localhost:8080/sbml4j/dbStatus>
 
 ### 5. Restore a previously save database backup
 To restore a database backup you created earlier, shutodwn the system and run:
