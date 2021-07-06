@@ -5,7 +5,7 @@ SBML4j is a Java Spring-based application for persisting biological models descr
 It offers various network mapping options for creating network representations of the loaded models.
 These networks can be annotated with arbitrary data on nodes and edges, filtered by nodes and edges and their repspective types and are returned by the service in the versatile GraphML format.
 In addition various types of graph algorithms and searches can be performed.
-To find out more about SBML4j head over to https://github.com/kohlbacherlab/sbml4j
+To find out more about SBML4j head over to https://github.com/thortiede/sbml4j
 
 This Repository offers a docker-compose based setup for initialising, running and managing a SBML4j installation including the neo4j database instance needed to store the networks and run the graph algorithms.
  
@@ -50,7 +50,7 @@ To learn more about the options for initialisation, run:
 
 This will show you the help information of the provided script, giving details on the various options.
 
-In case you are not on a Microsoft(R) Windows(R)-based operating system, this install script will not work for you.
+In case you are on a Microsoft(R) Windows(R)-based operating system, this install script will not work for you.
 Unfortunately at this time we do not provide a pre-built installation script for Microsoft(R) Windows(R) or other non-linux based operating systems.
 For now your only option is to manually edit and run the *docker run* commands needed:
 
