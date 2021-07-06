@@ -54,11 +54,15 @@ In case you are not on a Microsoft(R) Windows(R)-based operating system, this in
 Unfortunately at this time we do not provide a pre-built installation script for Microsoft(R) Windows(R) or other non-linux based operating systems.
 For now your only option is to manually edit and run the $docker run$ commands needed:
 
-   1. Setup the volume for the neo4j database (Replace the ${PWD} directives with your local folders and the ${prefix_name} by the current folder in all small letters (i.e. sbml4j-compose)) 
+1. Setup the volume for the neo4j database (Replace the ${PWD} directives with your local folders and the ${prefix_name} by the current folder in all small letters (i.e. sbml4j-compose)) 
+
     docker run --rm --detach --mount type=bind,src=${PWD}/scripts,dst=/scripts --mount type=bind,src=${PWD}/conf,dst=/conf --mount type=volume,src=${prefix_name}_sbml4j_neo4j_vol,dst=/vol alpine /scripts/setup_neo4j.sh
-   2. Setup the volume for the api-documentation page (again replace as above, and in addition replace ${api_def} with $sbml4j.yaml$ or your custom api-definition file if you made changes):
-    docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
-   3. Setup the volume for the sbml4j service (replace as above)
+
+2. Setup the volume for the api-documentation page (again replace as above, and in addition replace ${api_def} with $sbml4j.yaml$ or your custom api-definition file if you made changes):
+
+   docker run --rm --detach --mount type=bind,src=${PWD}/api_doc,dst=/api --mount type=volume,src=${prefix_name}\_sbml4j_api_doc_vol,dst=/definition alpine cp /api/$api_def /definition/sbml4j.yaml
+
+3. Setup the volume for the sbml4j service (replace as above)
     docker run --rm --detach --mount type=volume,src=${prefix_name}_sbml4j_service_vol,dst=/logs alpine touch /logs/root.log
 
 This should leave you with three volumes prefixed with the folder-name in lower-case (i.e. sbml4j-compose), which is all you need to start the service.
@@ -68,7 +72,7 @@ We are happy to help you troubleshoot.
 If you are willing to help implement a Windows(R) compatible version of the $sbml4j.sh$ script let us know and we are happy to get you started in contributing to this project.
 
 
-### 2. Starting the service
+### 2. Starting and stopping the service
 To start sbml4j service run:
 
     docker-compose up --attach-dependencies sbml4j
@@ -80,12 +84,6 @@ or, to not attach the console at all:
 Be advised that the console provides valuable output about the operation of SBML4j and it is therefore encouraged to attach to the output of sbml4j.
 As the neo4j database takes a couple of seconds to start and we currently can not manually wait on it to be available, the sbml4j service will keep restarting until the database is up.
 
-### 3. Test the system
-You can test the service by sending a GET request to
-
-<http://localhost:8080/sbml4j/dbStatus>
-
-### 3. Shutdown the system
 To shutdown the system again use:
 
     docker-compose down
@@ -93,12 +91,17 @@ To shutdown the system again use:
 either in a separate terminal window (but same directory of course)
 or use the same terminal if you ran it with *--detach*
 
-### 4. Backup the database
+### 3. Backup the database
 You can create a backup of the last used database. Shutdown the system then run:
 
     ./sbml4j.sh -b myname
 
 This will create two dump files in the local $db_backups$ directory that are prefixed with $myname$
+
+### 4. Test the system
+You can test the service by sending a GET request to
+
+<http://localhost:8080/sbml4j/dbStatus>
 
 ### 5. Restore a previously save database backup
 To restore a database backup you created earlier, shutodwn the system and run:
@@ -127,7 +130,7 @@ The following sections will guide you through the process of downloading KEGG pa
 Then a network mapping will be created and for demonstration purposes a Drug-Target file (which you will have to get from Drugbank.ca yourself due to licensing) will be uploaded to the service, cerating an annotated version of the aforementioned network-mapping containig this data.
 This database will then replicate the sample database that you can find at:
 
-    https://sbml4j.informatik.uni-tuebingen.de
+> https://sbml4j.informatik.uni-tuebingen.de
 
 This sample database consists of 61 KEGG pathways related to cancer and all changes you make to this instance will be reset every night.
 Of course your own local version of the database will not be reset nightly.
@@ -251,8 +254,8 @@ The field sourcePathwayUUIDs has to be an array of character strings, each strin
 ```bash
 curl -v \
      -H "Content-Type: application/json" \
-     -d '{"name":"BMC_Collection", \
-          "description":"This is the Collection for the BMC Publication", \
+     -d '{"name":"KEGG61_97.0", \
+          "description":"This Collection contains 61 cancer-related pathways", \
           "sourcePathwayUUIDs":["909520db-8ca9-40df-bffe-af9e48e93c48", \
                                 "9d959b42-f1da-4061-960b-4b58e1ba3c16" \
                                ] \
@@ -264,7 +267,7 @@ curl -v \
 A simple python call making use of pysbml4j can look like this:
 ```python
 collUUID = client.createPathwayCollection("KEGG61-97.0", 
-                  "Collection pathway for all 61 KEGG pathways", 
+                  "This Collection contains 61 cancer-related pathways", 
                   pathwayUUIDs
            )
 print(collUUID)
@@ -374,7 +377,7 @@ curl -v \
    http://localhost:8080/sbml4j/networks/a68645cb-f3bb-49d3-b05f-7f6f05debba3/csv
 ```
 
-The uuid in the url (here a68645cb-f3bb-49d3-b05f-7f6f05debba3 as example) is the uuid of the *PATHWAYMAPPING* created in [Step 7.6 Create network mappings](#7.6-create-network-mappings) and can be found in the response.mapping file created in that section using the curl command. Be sure to replace the uuid shown here with your own uuid as it is specific to your database.
+The uuid in the url (here a68645cb-f3bb-49d3-b05f-7f6f05debba3 as example) is the uuid of the *PATHWAYMAPPING* created in [Step 7.6 Create network mappings](#76-create-network-mappings) and can be found in the response.mapping file created in that section using the curl command. Be sure to replace the uuid shown here with your own uuid as it is specific to your database.
 
 The python package also offers this functionality:
 ```python
@@ -388,7 +391,7 @@ Now your installation of SBML4j should contain the same base network-database th
 > https://sbml4j.informatik.uni-tuebingen.de
 
 
-###$ 7.9. Save the network database to reset your networks in the future
+####$ 7.9. Save the network database to reset your networks in the future
 Before backing up the network database you need to stop the service with
 
     docker-compose down
@@ -401,7 +404,7 @@ Then you can use the provided script to backup the database:
 
 This will create two '.dump' files in the **db_backups** folder containing the database backup you just created.
 
-### 11. Restoring the state of the database
+#### 7.10 Restoring the state of the database
 Before restoring the network database you need to stop the service with
 
     docker-compose down
