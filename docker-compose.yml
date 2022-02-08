@@ -1,27 +1,5 @@
 version: "3.8"
 services:
-  sbml4j_db_setup:
-    image: alpine
-    volumes:
-      - sbml4j_neo4j_vol:/vol
-      - ./neo4j_data:/data
-      - ./scripts:/script
-      - ./conf:/conf
-    command: ["/bin/sh", "-c", "cd /script && chmod a+x db_setup.sh && ./db_setup.sh ${db_backup}"]
-
-  sbml4j_db_backup:
-    image: alpine
-    volumes:
-      - sbml4j_neo4j_vol:/vol
-      - ./neo4j_data:/neo4j_data
-    command: ["/bin/sh", "-c", "cd /neo4j_data && tar cfz sbml4j_database_backup.tar.gz /vol/data/"]
-
-  sbml4j_api_doc_setup:
-    image: alpine
-    volumes:
-      - sbml4j_api_doc_vol:/definition
-      - ./api_doc:/api_doc
-    command: ["/bin/sh", "-c", "mkdir -p /definition && cp /api_doc/sbml4j.yaml /definition/sbml4j.yaml"]
   sbml4j_api_doc:
     image: swaggerapi/swagger-ui
     container_name: sbml4japidoc
@@ -54,7 +32,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:1.0
+    image: thortiede/sbml4j:1.0.5
     container_name: sbml4j
     volumes:
       - sbml4j_service_vol:/logs
@@ -64,11 +42,11 @@ services:
       #- SPRING_DATA_NEO4j_AUTO-INDEX=update
       - SERVER_SERVLET_CONTEXTPATH=/sbml4j
       - SERVER_PORT=8080
-      - OVERVIEWNETWORK_DEFAULT_BASE-NETWORK-NAME=Overview-Base
+      - OVERVIEWNETWORK_DEFAULT_BASE-NETWORK-NAME=Overview-Base-approved
       - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
       - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
       - OVERVIEWNETWORK_DEFAULT_TERMINATEAT=Drugtarget
-      - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
+      - OVERVIEWNETWORK_DEFAULT_DIRECTION=upstream
       - SBML4J_GENERAL_API-DOCUMENTATION-URL=http://localhost:9080/
       - SBML4J_context_minSize=1
       - SBML4J_context_maxSize=3
@@ -107,7 +85,7 @@ services:
       - sbml4jdatabase
       - sbml4j_api_doc
     ports:
-      - "8080:8080"
+      - "12342:8080"
     restart: on-failure
 
 volumes:

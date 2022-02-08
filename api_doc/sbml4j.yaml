@@ -430,7 +430,7 @@ paths:
         schema:
           type: string
           format: uuid
-          example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: type
         in: query
         description: The type of data that csv file adds to the network (i.e. Drivergene, Drugtarget)
@@ -448,7 +448,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: Drivergene network for network 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: Drivergene network for network 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: prefixName
         in: query
         description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
@@ -515,7 +515,7 @@ paths:
         schema:
           type: string
           format: uuid
-          example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: genes
         in: query
         required: true
@@ -621,7 +621,7 @@ paths:
         schema:
           type: string
           format: uuid
-          example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: minSize
         in: query
         description: The minimum depth of the context search
@@ -671,7 +671,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: Drivergene network for network 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: Drivergene network for network 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: prefixName
         in: query
         description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
@@ -734,7 +734,7 @@ paths:
         schema:
           type: string
           format: uuid
-          example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
       - name: myDrugURL
         in: query
         description: A base url of a MyDrug Database including the port number
