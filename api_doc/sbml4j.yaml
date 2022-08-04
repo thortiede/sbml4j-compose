@@ -1,68 +1,68 @@
----
 openapi: 3.0.3
 info:
-  title: sbml4j API
   description: |
     This is the api for the SBML4j Service
-  termsOfService: http://swagger.io/terms/
-  contact:
+  version: '1.2'
+  title: sbml4j API
+  termsOfService: 'http://swagger.io/terms/'
+  contact: 
     name: Thorsten Tiede
     email: thorsten.tiede@uni-tuebingen.de
   license:
     name: MIT license
-    url: https://opensource.org/licenses/MIT
-  version: 1.1.7
-externalDocs:
-  description: Find out more about SBML4j
-  url: https://github.com/kohlbacherlab/sbml4j
+    url: 'https://opensource.org/licenses/MIT'
 servers:
-- url: https://sbml4j.informatik.uni-tuebingen.de/interactive-api
-  description: University of Tuebingen Demo Server
+# Added by API Auto Mocking Plugin
+#  - description: SwaggerHub API Auto Mocking
+#    url: https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.7
+  - description: University of Tuebingen Demo Server
+    url: https://sbml4j.informatik.uni-tuebingen.de/interactive-api
 tags:
-- name: networks
-  description: Everything about networks
-- name: overview
-  description: Overview network endpoints
-- name: analysis
-  description: Various specialized analysis functions
-- name: documentation
-  description: Documentation specific functions
-- name: sbml
-  description: Handle SBML files
-- name: pathways
-  description: Everything about pathways
-- name: warehouse
-  description: Handle Warehouse related tasks
-- name: mydrug
-  description: MyDrug integration endpoints
+  - name: networks
+    description: Everything about networks
+  - name: overview
+    description: Overview network endpoints
+  - name: analysis
+    description: Various specialized analysis functions
+  - name: documentation
+    description: Documentation specific functions
+  - name: sbml
+    description: Handle SBML files and get info about individual elements of the SBML Knowledge-graph
+  - name: graphml
+    description: Handle GraphML input
+  - name: pathways
+    description: Everything about pathways
+  - name: warehouse
+    description: Handle Warehouse related tasks
+  - name: mydrug
+    description: MyDrug integration endpoints
+    
 paths:
+
+################### networks ###################
+
   /networks:
     get:
       tags:
-      - networks
+        - networks
       summary: List available networks
       operationId: listAllNetworks
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
       responses:
-        "400":
+        '400':
           description: Bad Request
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
@@ -71,832 +71,926 @@ paths:
                 items:
                   $ref: '#/components/schemas/NetworkInventoryItem'
     post:
-      tags:
-      - networks
+      tags: 
+        - networks
       summary: Create a copy of the network with uuid UUID
       operationId: copyNetwork
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: parentUUID
-        in: query
-        description: The UUID of the parent network to be copied
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          format: uuid
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene network
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: suffixName
-        in: query
-        description: Flag whether to suffix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: parentUUID
+          in: query
+          description: The UUID of the parent network to be copied
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: Drivergene network
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: suffixName
+          in: query
+          required: false
+          description: Flag whether to suffix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
       responses:
-        "400":
+        '400':
           description: Invalid input
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "201":
+        '201':
           description: network copied
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkInventoryItem'
+
   /networks/{UUID}:
     get:
       tags:
-      - networks
+        - networks
       summary: Retrieve the contents of a network
       operationId: getNetwork
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network to get
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-      - name: directed
-        in: query
-        description: |
-          Boolean flag wether the resulting network-graph should be directed
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The UUID of the network to get
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: directed
+          in: query
+          description: >
+            Boolean flag wether the resulting network-graph should be directed
+          schema:
+            type: boolean
+            default: false
       responses:
-        "204":
+        '204':
           description: Network is empty or not available
-        "200":
+        '200':
           description: successful operation
           content:
             application/octet-stream:
               schema:
                 type: string
-                description: A graphml formatted file containing the requested network
                 format: binary
-        "403":
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+                        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+                    <key id="v_name" for="node" attr.name="name" attr.type="string"/>
+                    <key id="e_interaction" for="edge" attr.name="interaction" attr.type="string"/>
+                    <graph id="G" edgedefault="undirected">
+                    <node id="n0">
+                        <data key="v_name">exampleNode 0</data>
+                    </node>
+                    <node id="n1">
+                        <data key="v_name">exampleNode 1</data>
+                    </node>
+                    <edge source="n0" target="n1">
+                      <data key="e_interaction">activation</data>
+                    </edge>
+                    </graph>
+                  </graphml>
+                description: A graphml formatted file containing the requested network
+        '403':
           description: The current user is forbidden from accessing this data
+
+   
+
     delete:
       tags:
-      - networks
+        - networks
       summary: Request the deletion of a network
       operationId: deleteNetwork
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests deletion of their network
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network to delete
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests deletion of their network
+          required: true
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The UUID of the network to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
-        "400":
+        '400':
           description: Bad Request
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "404":
+        '404':
           description: The network you tried to delete does not exist
-        "204":
+        '204':
           description: Network deleted.
+
   /networks/{UUID}/annotation:
     post:
-      tags:
-      - networks
-      summary: |
+      tags: 
+        - networks
+      summary: > 
         Add annotation to network nodes and/or relationships. Results in the creation of a new network entity, keeping the entity with UUID unchanged.
       operationId: addAnnotationToNetwork
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the parent network to derive a new network from
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene network
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: derive
-        in: query
-        description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: true
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The UUID of the parent network to derive a new network from
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: Drivergene network
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: derive
+          in: query
+          description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
+          schema:
+            type: boolean
+            default: true
       requestBody:
         description: An annotation item with information about the annotations to be added
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AnnotationItem'
-        required: true
       responses:
-        "400":
+        '400':
           description: Invalid input
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "201":
+        '201':
           description: network created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkInventoryItem'
+
   /networks/{UUID}/filter:
     post:
-      tags:
-      - networks
+      tags: 
+        - networks
       summary: Filter a network according to the request body options. Results in the creation of a new network entity, keeping the entity with UUID unchanged.
       operationId: filterNetwork
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the parent network to derive a new network from
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene network
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The UUID of the parent network to derive a new network from
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: Drivergene network
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
       requestBody:
-        description: A FilterOptions item containing the information for the filtering process
+        description: A FilterOptions item containing the information for the filtering process    
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/FilterOptions'
-        required: true
       responses:
-        "400":
+        '400':
           description: Invalid input
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "201":
+        '201':
           description: network created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkInventoryItem'
+
   /networks/{UUID}/options:
     get:
       tags:
-      - networks
+        - networks
       summary: Get available options for network
       operationId: getNetworkOptions
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The network UUID for which the networkOptions are to be fetched
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The network UUID for which the networkOptions are to be fetched
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "400":
+        '400':
           description: Bad Request
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
-              schema:
+              schema: 
                 $ref: '#/components/schemas/NetworkOptions'
+
   /networks/{UUID}/csv:
     post:
       tags:
-      - networks
+        - networks
       summary: Provide a csv-file with annotation information
       operationId: addCsvDataToNetwork
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network to add the data to
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: type
-        in: query
-        description: The type of data that csv file adds to the network (i.e. Drivergene, Drugtarget)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene network for network 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: derive
-        in: query
-        description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: true
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network to add the data to
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: type
+          in: query
+          description: The type of data that csv file adds to the network (i.e. Drivergene, Drugtarget)
+          required: true
+          schema:
+            type: string
+            example: Drivergene
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: Drivergene network for network 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: derive
+          in: query
+          description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
+          schema:
+            type: boolean
+            default: true
       requestBody:
         description: The csv-files containing the data to add to the network
+        required: true
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/body'
-        required: true
+              properties:
+              # The property name 'data' will be used for all files.
+                data:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
       responses:
-        "400":
+        '400':
           description: Invalid input
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "201":
+        '201':
           description: network created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NetworkInventoryItem'
+                $ref: '#/components/schemas/NetworkInventoryItem'  
   /networks/{UUID}/context:
     get:
-      tags:
-      - networks
+      tags: 
+        - networks
       summary: Get network context of one or multiple genes in the network with uuid {UUID}
       operationId: getContext
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network that serves as a basis for this context
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: genes
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: BRCA1, BRAF
-      - name: minSize
-        in: query
-        description: The minimum depth of the context search
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: maxSize
-        in: query
-        description: The maximum depth of the context search
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: terminateAt
-        in: query
-        description: find nodes of this type and stop the expansion there (upload a csv with that type first to be able to use this)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene
-      - name: direction
-        in: query
-        description: The direction of the context expansion (upstream, downstream, both)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: upstream
-          default: both
-          enum:
-          - upstream
-          - downstream
-          - both
-      - name: directed
-        in: query
-        description: Denotes whether the return network graph is directed
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          example: true
-          default: false
-      - name: weightproperty
-        in: query
-        description: The name of the annotation used as weight for calculating shortest paths between entities
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: myweight
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network that serves as a basis for this context
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: genes
+          in: query
+          required: true
+          style: form
+          schema:
+            type: string
+            example: BRCA1, BRAF
+        - name: minSize
+          in: query
+          description: The minimum depth of the context search
+          schema:
+            type: integer
+            format: int32
+        - name: maxSize
+          in: query
+          description: The maximum depth of the context search
+          schema:
+            type: integer
+            format: int32
+        - name: terminateAt
+          in: query
+          description: find nodes of this type and stop the expansion there (upload a csv with that type first to be able to use this)
+          schema:
+            type: string
+            example: Drivergene
+        - name: direction
+          in: query
+          description: The direction of the context expansion (upstream, downstream, both)
+          schema:
+            type: string
+            example: upstream
+            default: both
+            enum: [upstream, downstream, both]
+        - name: directed
+          in: query
+          description: Denotes whether the return network graph is directed
+          schema:
+            type: boolean
+            example: true
+            default: false
+        - name: weightproperty
+          in: query
+          description: The name of the annotation used as weight for calculating shortest paths between entities
+          schema:
+            type: string
+            example: myweight
+            
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "200":
+        '200':
           description: successful operation
           content:
             application/octet-stream:
               schema:
                 type: string
-                description: A graphml formatted file containing the requested context
                 format: binary
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+                        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+                    <key id="v_name" for="node" attr.name="name" attr.type="string"/>
+                    <key id="e_interaction" for="edge" attr.name="interaction" attr.type="string"/>
+                    <graph id="G" edgedefault="undirected">
+                    <node id="n0">
+                        <data key="v_name">exampleNode 0</data>
+                    </node>
+                    <node id="n1">
+                        <data key="v_name">exampleNode 1</data>
+                    </node>
+                    <edge source="n0" target="n1">
+                      <data key="e_interaction">activation</data>
+                    </edge>
+                    </graph>
+                  </graphml>
+                description: A graphml formatted file containing the requested context
     post:
       tags:
-      - networks
+        - networks
       summary: Create network context of one or multiple genes in the network with uuid {UUID}
       operationId: postContext
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network that serves as a basis for this context
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: minSize
-        in: query
-        description: The minimum depth of the context search
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: maxSize
-        in: query
-        description: The maximum depth of the context search
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          format: int32
-      - name: terminateAt
-        in: query
-        description: find nodes of this type and stop the expansion there (upload a csv with that type first to be able to use this)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene
-      - name: direction
-        in: query
-        description: The direction of the context expansion (upstream, downstream, both)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: upstream
-          default: both
-          enum:
-          - upstream
-          - downstream
-          - both
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Drivergene network for network 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: weightproperty
-        in: query
-        description: The name of the annotation used as weight for calculating shortest paths between entities
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: myweight
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network that serves as a basis for this context
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: minSize
+          in: query
+          description: The minimum depth of the context search
+          schema:
+            type: integer
+            format: int32
+        - name: maxSize
+          in: query
+          description: The maximum depth of the context search
+          schema:
+            type: integer
+            format: int32
+        - name: terminateAt
+          in: query
+          description: find nodes of this type and stop the expansion there (upload a csv with that type first to be able to use this)
+          required: false
+          schema:
+            type: string
+            example: Drivergene
+        - name: direction
+          in: query
+          description: The direction of the context expansion (upstream, downstream, both)
+          schema:
+            type: string
+            example: upstream
+            default: both
+            enum: [upstream, downstream, both]
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: Drivergene network for network 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: weightproperty
+          in: query
+          description: The name of the annotation used as weight for calculating shortest paths between entities
+          schema:
+            type: string
+            example: myweight
       requestBody:
         description: The genes for which the context should be generated
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/NodeList'
-        required: true
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "201":
+        '201':
           description: context network created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkInventoryItem'
+                  
   /networks/{UUID}/myDrug:
     post:
       tags:
-      - networks
-      - mydrug
+        - networks
+        - mydrug
       summary: Provide a URL to a MyDrug Neo4j Database and add Drug nodes and Drug-targets->Gene Relationships to a network
       operationId: addMyDrugRelations
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the network that the myDrug Data should be added to. A copy will be created.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 5c298000-0d6c-4e3d-b03d-0fe9d0985d26
-      - name: myDrugURL
-        in: query
-        description: A base url of a MyDrug Database including the port number
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          format: url
-          example: http://127.0.0.1:7474
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: MyDrug network
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: derive
-        in: query
-        description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: true
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network that the myDrug Data should be added to. A copy will be created.
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: myDrugURL
+          in: query
+          required: true
+          description: A base url of a MyDrug Database including the port number
+          schema:
+            type: string
+            format: url
+            example: http://127.0.0.1:7474
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: MyDrug network
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: derive
+          in: query
+          description: Flag whether to derive a new network and add annotation to it (true) or add annotation to existing network without deriving subnetwork (false)
+          schema:
+            type: boolean
+            default: true
       responses:
-        "201":
+        '201':
           description: Created network with MyDrug nodes and relations added.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NetworkInventoryItem'
-        "400":
+                  $ref: '#/components/schemas/NetworkInventoryItem'
+        '400':
           description: Bad Request
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
+  /networks/{UUID}/prov:
+    get:
+      tags:
+        - networks
+      summary: retrieve provenance information to this network
+      description: >
+        Follows the provenance trail and gathers all avaialable prov-annotation.
+        Assembles a response containing all provenance information that can be used to retrace
+        the creation of this network all the way from the models loaded from the sbml files.
+      operationId: getProvenanceInformation
+      parameters:
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network that serves as a basis for this context
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+      responses:
+        '400':
+          description: Bad Request
+        '403':
+          description: The current user is forbidden from accessing this data
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProvenanceInfoItem'
+    
+    put:
+      tags:
+        - networks
+      summary: Add provenance information to a network
+      description: >
+        Adds the provided request body elements to the provenance-annotation 
+        of the activity that created the network with entityUUID of {UUID}
+      operationId: putProvenanceInformation
+      parameters:
+        - name: user
+          in: header
+          description: The user which requests the addition of provenance information, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          required: true
+          description: The UUID of the network that serves as a basis for this context
+          schema:
+            type: string
+            format: uuid
+            example: 2d25f4b9-8dd5-4bc3-9d04-9af418302244
+        - name: name
+          in: query
+          required: true
+          description: A name for this provenance item
+          schema:
+            type: string
+            example: application-information
+      requestBody:
+        description: A freeform json-object with key-value pairs of names and values to act as provenance-annotation
+        required: true
+        content:
+          application/json:
+            schema:
+              additionalProperties:
+                type: string
+              
+      responses:
+        '400':
+          description: Bad Request
+        '403':
+          description: The current user is forbidden from accessing this data
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProvenanceInfoItem'   
+ ################### vcf ###################
   /overview:
     get:
       tags:
-      - overview
+        - overview
       summary: retrieve a previously created overview network for a user by its name
-      description: |
-        Attempts to retrieve an overview network by the network name that was  given during creation using POST /overview. If the network is available (created and active) it gets returned in  graphml format. If the network is still being created (not active yet) the endpoint returns a 404 error. If the network could not be created, the endpoint returns a 403 error.
+      description: >
+        Attempts to retrieve an overview network by the network name that was 
+        given during creation using POST /overview.
+        If the network is available (created and active) it gets returned in 
+        graphml format.
+        If the network is still being created (not active yet) the endpoint
+        returns a 404 error.
+        If the network could not be created, the endpoint returns a 403 error.
       operationId: getOverviewNetwork
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: name
-        in: query
-        description: The network name to get
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Driver network
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: name
+          in: query
+          description: The network name to get
+          required: true
+          schema:
+            type: string
+            example: Driver network
       responses:
-        "204":
+        '204':
           description: Network is not ready yet
-        "200":
+        '200':
           description: successful operation
           content:
             application/octet-stream:
               schema:
                 type: string
-                description: A graphml formatted file containing the requested network
                 format: binary
-        "403":
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+                        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+                    <key id="v_name" for="node" attr.name="name" attr.type="string"/>
+                    <key id="e_interaction" for="edge" attr.name="interaction" attr.type="string"/>
+                    <graph id="G" edgedefault="undirected">
+                    <node id="n0">
+                        <data key="v_name">exampleNode 0</data>
+                    </node>
+                    <node id="n1">
+                        <data key="v_name">exampleNode 1</data>
+                    </node>
+                    <edge source="n0" target="n1">
+                      <data key="e_interaction">activation</data>
+                    </edge>
+                    </graph>
+                  </graphml>
+                description: A graphml formatted file containing the requested network
+        '403':
           description: The network with the provided name could not be created
+
     post:
       tags:
-      - overview
+        - overview
       summary: upload a set of genes and get a network connecting them
-      description: |
-        This endpoint creates an overview network that contains all available genes from the input gene list. The given genes will be annotated with  the boolean given by the field annotationName. The overview network will contain all available relationships between genes and metabolites that are part of the network. The endpoint returns a networkInventoryItem of the created network.  It can be retrieved using the UUID in the GET /network endpoint. If baseNetworkUUID is omitted, the full model will be used.
+      description: >
+        This endpoint creates an overview network that contains all available
+        genes from the input gene list. The given genes will be annotated with 
+        the boolean given by the field annotationName. The overview network will
+        contain all available relationships between genes and metabolites
+        that are part of the network.
+        The endpoint returns a networkInventoryItem of the created network. 
+        It can be retrieved using the UUID in the GET /network endpoint.
+        If baseNetworkUUID is omitted, the full model will be used.
       operationId: createOverviewNetwork
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
       requestBody:
         description: An OverviewNetworkItem containing the options for creating an overview network
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/OverviewNetworkItem'
-        required: true
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "403":
+        '403':
           description: The current user is forbidden from accessing this data
-        "201":
+        '201':
           description: network created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkInventoryItem'
-  /geneAnalysis:
+
+################### analysis ###################
+  /idMap:
     get:
       tags:
-      - analysis
-      summary: Relation- and Pathway Analysis for a gene
-      operationId: getGeneAnalysis
+        - sbml
+      summary: Get the known ID Mappings for the given names
+      operationId: getIdMap
       parameters:
-      - name: geneSymbol
-        in: query
-        description: The geneSymbol for which the analysis should be fetched
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: symbol
+          in: query
+          description: The symbol, or symbols to find idMappings for
+          schema:
+            type: string
+          required: true
+        - name: separator
+          in: query
+          description: A custom separator character for separting multiple input symbols. Default is ','
+          schema:
+            type: string
+            default: ','
+        - name: idSystem
+          in: query
+          description: Limit the id systems to extract. All available ids are extracted if ommitted.
+          schema: 
+            type: string
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/GeneAnalysisItem'
-  /geneSetAnalysis:
+                  $ref: '#/components/schemas/IdItem'
     post:
       tags:
-      - analysis
-      summary: Relation- and Pathway Analysis for a set of genes
-      operationId: getGeneSetAnalysis
+        - sbml
+      summary: Get the known ID Mappings for the given names
+      operationId: getIdMapBatch
+      parameters:
+        - name: idSystem
+          in: query
+          description: Limit the id systems to extract. All available ids are extracted if ommitted.
+          schema: 
+            type: string
+      requestBody:
+        description: The symbols for which the id mapping should be fetched
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeList'
+        
+      responses:
+        '400':
+          description: Bad Request
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdItem'
+  /entityInfo:
+    get:
+      tags:
+        - sbml
+      summary: Information about given entity, or entities with relation- and reaction information
+      operationId: getEntityInfo
+      parameters:
+        - name: geneSymbol
+          in: query
+          description: The geneSymbol for which the info should be fetched, can process multiple comma-separated symbols
+          schema:
+            type: string
+          required: true
+      responses:
+        '400':
+          description: Bad Request
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityInfoItem'
+                  
+    post:
+      tags:
+        - sbml
+      summary: Batch-Processing for information about given entity, or entities with relation- and reaction information
+      operationId: getEntityInfoBatch
       requestBody:
         description: A json formatted and comma separated list of genes in the set to be analysed
+        required: true
         content:
           application/json:
             schema:
@@ -904,85 +998,97 @@ paths:
               items:
                 type: string
                 example: BRAF
-        required: true
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
-              schema:
+              schema: 
                 type: array
                 items:
-                  $ref: '#/components/schemas/GeneAnalysisItem'
+                  $ref: '#/components/schemas/EntityInfoItem'
   /geneSet:
     get:
       tags:
-      - analysis
+        - analysis
       summary: provide a list of genes and get a network containing all genes and their respective relations
       operationId: getGeneSet
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the gene set, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: query
-        description: The UUID of the parent network to derive a new network from, if omitted the full model will be used
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          format: uuid
-      - name: geneSymbols
-        in: query
-        description: The geneSymbols for which the analysis should be fetched
-        required: true
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
+        - name: user
+          in: header
+          description: The user which requests the gene set, the configured public user will be used if omitted
+          schema:
             type: string
-        example: geneSymbols=BRAF,BRCA1
-      - name: directed
-        in: query
-        description: |
-          Boolean flag wether the resulting network-graph should be directed
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+            example: sbml4j
+        - name: UUID
+          in: query
+          description: The UUID of the parent network to derive a new network from, if omitted the full model will be used
+          schema:
+            type: string
+            format: uuid
+        - name: geneSymbols
+          in: query
+          description: The geneSymbols for which the analysis should be fetched
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+          example: geneSymbols=BRAF,BRCA1
+          required: true
+        - name: directed
+          in: query
+          description: >
+            Boolean flag wether the resulting network-graph should be directed
+          schema:
+            type: boolean
+            default: false
       responses:
-        "204":
+        '204':
           description: Network is empty or not available
-        "200":
+        '200':
           description: successful operation
           content:
             application/octet-stream:
               schema:
                 type: string
-                description: A graphml formatted file containing the requested geneset
                 format: binary
-        "403":
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+                        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+                    <key id="v_name" for="node" attr.name="name" attr.type="string"/>
+                    <key id="e_interaction" for="edge" attr.name="interaction" attr.type="string"/>
+                    <graph id="G" edgedefault="undirected">
+                    <node id="n0">
+                        <data key="v_name">exampleNode 0</data>
+                    </node>
+                    <node id="n1">
+                        <data key="v_name">exampleNode 1</data>
+                    </node>
+                    <edge source="n0" target="n1">
+                      <data key="e_interaction">activation</data>
+                    </edge>
+                    </graph>
+                  </graphml>
+                description: A graphml formatted file containing the requested geneset
+        '403':
           description: The current user is forbidden from accessing this data
+
+################### documentation ###################
   /version:
     get:
-      tags:
-      - documentation
+      tags: 
+        - documentation
       summary: Get the version of sbml4j running
       operationId: getVersion
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
@@ -991,28 +1097,28 @@ paths:
                 example: v0.2.0
   /profile:
     get:
-      tags:
-      - documentation
+      tags: 
+        - documentation
       summary: Get the active profile of sbml4j running
       operationId: getProfile
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: string
-                  example: test
+                    type: string
+                    example: test   
   /dbStatus:
     get:
-      tags:
-      - documentation
+      tags: 
+        - documentation
       summary: Get the status of the connected database
       operationId: getDbStatus
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
@@ -1021,70 +1127,70 @@ paths:
                 example: Database operational
   /api:
     get:
-      tags:
-      - documentation
+      tags: 
+        - documentation
       summary: Show the API help
       operationId: getBaseDocumentation
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             text/html:
               schema:
                 type: object
-                example: <html><head>SBML4j API</head><body>This is the Documentation of the SBML4j API</body></html>
+                example: <html><head>SBML4j API</head><body>This is the Documentation of the SBML4j API</body></html>   
+
+################### sbml ###################            
   /sbml:
     post:
       tags:
-      - sbml
+        - sbml
       summary: Upload SBML Model to create a Pathway
       operationId: uploadSBML
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: organism
-        in: query
-        description: The three-letter organism code
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: hsa
-      - name: source
-        in: query
-        description: The name of the source this SBML originates from
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: KEGG
-      - name: version
-        in: query
-        description: The version of the source this SBML originates from
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: 2020-1
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: organism
+          in: query
+          required: true
+          description: The three-letter organism code
+          schema:
+            type: string
+            example: hsa
+        - name: source
+          in: query
+          required: true
+          description: The name of the source this SBML originates from
+          schema:
+            type: string
+            example: KEGG
+        - name: version
+          in: query
+          required: true
+          description: The version of the source this SBML originates from
+          schema:
+            type: string
+            example: 2020-1
       requestBody:
         description: The xml-files containing the sbml models
+        required: true
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/body_1'
-        required: true
+              properties:
+              # The property name 'files' will be used for all files.
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    
       responses:
-        "201":
+        '201': 
           description: Pathways from models created
           content:
             application/json:
@@ -1092,44 +1198,113 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PathwayInventoryItem'
-        "400":
+        '400':
           description: Bad Request
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
+                
+################### graphml ####################
+  /graphml:
+    post:
+      tags:
+        - graphml
+      summary: Upload GraphML file
+      operationId: uploadGraphML
+      parameters:
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: externalUser
+        - name: parentUUID
+          in: query
+          required: false
+          description: The UUID of the entity that this network originally derived from
+          schema:
+            type: string
+            format: uuid
+            example: 6f34f4b9-8dd5-4bc3-9d04-9af418303f54
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network
+          schema:
+            type: string
+            example: GraphML network
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: suffixName
+          in: query
+          required: false
+          description: Flag whether to suffix the given networkname on the original network name (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        description: The xml-files containing the graphml graph
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+              # The property name 'files' will be used for all files.
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    
+      responses:
+        '201': 
+          description: Network from graphml created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NetworkInventoryItem'
+        '400':
+          description: Bad Request
+          headers:
+            reason: 
+              description: the reason why the request was bad
+              schema: 
+                type: string
+                
+################### pathways ###################
   /pathways:
     get:
       tags:
-      - pathways
+        - pathways
       summary: List available pathways
       operationId: listAllPathways
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests listing of their pathways, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: hideCollections
-        in: query
-        description: Do hide Collection Pathways in the output
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests listing of their pathways, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: hideCollections
+          in: query
+          description: Do hide Collection Pathways in the output
+          schema:
+            type: boolean
+            default: false
+            
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
@@ -1137,158 +1312,136 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PathwayInventoryItem'
+            
   /mapping/{UUID}:
     post:
       tags:
-      - pathways
+        - pathways
       summary: Map pathwayContents on a new network representation
       operationId: mapPathway
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: UUID
-        in: path
-        description: The UUID of the pathway to be mapped
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-      - name: mappingType
-        in: query
-        description: The type of mapping to create
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          enum:
-          - METABOLIC
-          - PPI
-          - REGULATORY
-          - SIGNALLING
-          - PATHWAYMAPPING
-      - name: networkname
-        in: query
-        description: An optional name for the newly generated network, if omitted a default name will be generated in the format orgCode-mappingType-source-version
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: hsa-PPI-KEGG-2021
-      - name: prefixName
-        in: query
-        description: Flag whether to prefix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
-      - name: suffixName
-        in: query
-        description: Flag whether to suffix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: UUID
+          in: path
+          description: The UUID of the pathway to be mapped
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: mappingType
+          in: query
+          description: The type of mapping to create
+          required: true
+          schema:
+            type: string
+            enum:
+              - METABOLIC
+              - PPI
+              - REGULATORY
+              - SIGNALLING
+              - PATHWAYMAPPING
+        - name: networkname
+          in: query
+          required: false
+          description: An optional name for the newly generated network, if omitted a default name will be generated in the format orgCode-mappingType-source-version
+          schema:
+            type: string
+            example: hsa-PPI-KEGG-2021
+        - name: prefixName
+          in: query
+          required: false
+          description: Flag whether to prefix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
+        - name: suffixName
+          in: query
+          required: false
+          description: Flag whether to suffix the given networkname on the generated default-name (orgCode-mappingType-source-version) (true) or use networkname as sole name for the created network (false)
+          schema:
+            type: boolean
+            default: false
       responses:
-        "400":
+        '400':
           description: Bad Request
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
-        "201":
+        '201':
           description: Mapping for Pathway created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WarehouseInventoryItem'
+                
   /pathwayCollection:
     post:
       tags:
-      - pathways
+        - pathways
       summary: Create a collectionPathway from the submitted pathways
       operationId: createPathwayCollection
       parameters:
-      - name: user
-        in: header
-        description: The user which requests the creation, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
+        - name: user
+          in: header
+          description: The user which requests the creation, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
       requestBody:
         description: List of pathwayUUIDs and a databaseUUID to create the collection for
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PathwayCollectionCreationItem'
-        required: true
       responses:
-        "201":
+        '201':
           description: CollectionPathway created
           content:
             application/json:
               schema:
                 type: string
                 format: uuid
-                example: 0d25f4b9-8dd5-4bc3-9d04-9af418302244
-        "400":
+                example: d7b86402-3b91-460f-912e-ca75abecdd81
+        '400':
           description: Invalid input
           headers:
-            reason:
+            reason: 
               description: the reason why the request was bad
-              style: simple
-              explode: false
-              schema:
+              schema: 
                 type: string
+        
   /pathwayUUIDs:
     get:
       tags:
-      - pathways
+        - pathways
       summary: List UUIDs of available pathways
       operationId: listAllPathwayUUIDs
-      parameters:
-      - name: user
-        in: header
-        description: The user which requests listing of their pathways, the configured public user will be used if omitted
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: sbml4j
-      - name: hideCollections
-        in: query
-        description: Do hide Collection Pathways in the output
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
+      parameters: 
+        - name: user
+          in: header
+          description: The user which requests listing of their pathways, the configured public user will be used if omitted
+          schema:
+            type: string
+            example: sbml4j
+        - name: hideCollections
+          in: query
+          description: Do hide Collection Pathways in the output
+          schema:
+            type: boolean
+            default: false
+            
       responses:
-        "400":
+        '400':
           description: Bad Request
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
@@ -1297,52 +1450,52 @@ paths:
                 items:
                   type: string
                   format: uuid
-                  example: 0d25f4b9-8dd5-4bc3-9d04-9af418302244
+                  example: d25f4b9-8dd5-4bc3-9d04-9af418302244
+
+################### warehouse ###################
   /databaseUUID:
     get:
-      tags:
-      - warehouse
+      tags: 
+        - warehouse
       summary: Get the uuid of the databasenode for source with version
       operationId: getDatabaseUUID
       parameters:
-      - name: organism
-        in: query
-        description: The three-letter organism code
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: hsa
-      - name: source
-        in: query
-        description: The name of the source this SBML originates from
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: KEGG
-      - name: version
-        in: query
-        description: The version of the source this SBML originates from
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: 2020-1
+        - name: organism
+          in: query
+          required: true
+          description: The three-letter organism code
+          schema:
+            type: string
+            example: hsa
+        - name: source
+          in: query
+          required: true
+          description: The name of the source this SBML originates from
+          schema:
+            type: string
+            example: KEGG
+        - name: version
+          in: query
+          required: true
+          description: The version of the source this SBML originates from
+          schema:
+            type: string
+            example: 2020-1
       responses:
-        "200":
+        '200':
           description: successful operation
           content:
             application/json:
               schema:
                 type: string
                 format: uuid
-                example: 0d25f4b9-8dd5-4bc3-9d04-9af418302244
-        "404":
+                example: d25f4b9-8dd5-4bc3-9d04-9af418302244
+        '404':
           description: Database node for source and version found
+
+externalDocs:
+  description: Find out more about SBML4j
+  url: 'https://github.com/kohlbacherlab/sbml4j'
 components:
   schemas:
     WarehouseInventoryItem:
@@ -1377,6 +1530,9 @@ components:
         numberOfRelations:
           type: integer
           format: int32
+        numberOfReactions:
+          type: integer
+          format: int32
         nodeTypes:
           type: array
           items:
@@ -1391,6 +1547,7 @@ components:
           type: string
           description: 'One of: REGULATORY, SIGNALLING, PPI, METABOLIC, PATHWAYMAPPING'
           example: REGULATORY
+
     PathwayInventoryItem:
       type: object
       properties:
@@ -1431,7 +1588,53 @@ components:
           items:
             type: string
             example: Cytosol
+
+    FileInventoryItem:
+      description: >
+        Brief summary of a file. Includes the name of the file, the md5 sum and
+        the type of file.
+      type: object
+      properties:
+        filename:
+          type: string
+          description: The name of the file
+          example: hsa05225.sbml.xml
+        md5sum:
+          type: string
+          description: The md5 sum of the file
+          format: md5
+          example: "3084b45d53e1085e8b9c3dee7f53bc49"
+        fileNodeType:
+          type: string
+          description: The type of file
+          example: "SBML"
+       
+    DatabaseInventoryItem:
+      type: object
+      properties:
+        source: 
+          type: string
+          description: The name of the database source
+          example: "KEGG"
+        version:
+          type: string
+          description: The version of the database source
+          example: "v1.7"   
+          
     OverviewNetworkItem:
+      description: >
+        Submit a list of genes to build a overview network based
+        on the network given in 'baseNetworkUUID'. If the latter is omitted,
+        a default Network defined by the service will be used. Typically this 
+        will contain all relations and reactions known to the database.
+        The given genes will retrieve a boolean annotation 
+        given by annotationName.
+        If the edgeweightproperty is provided the named property on relations 
+        will be used to find shortest paths according to this weight 
+        between pairs of genes in the process of generating the network.
+        All relations will be treated of having the same weight if it is ommited.
+        The networkName will be used if given. 
+        A standard name is generated when ommited.
       type: object
       properties:
         baseNetworkUUID:
@@ -1451,9 +1654,9 @@ components:
         networkName:
           type: string
           example: Drivergene network
-      description: |
-        Submit a list of genes to build a overview network based on the network given in 'baseNetworkUUID'. If the latter is omitted, a default Network defined by the service will be used. Typically this  will contain all relations and reactions known to the database. The given genes will retrieve a boolean annotation  given by annotationName. If the edgeweightproperty is provided the named property on relations  will be used to find shortest paths according to this weight  between pairs of genes in the process of generating the network. All relations will be treated of having the same weight if it is ommited. The networkName will be used if given.  A standard name is generated when ommited.
     NodeList:
+      description: >
+        A list of node-symbols for which an action is to be performed (i.e. generate a multi-gene context)
       type: object
       properties:
         genes:
@@ -1461,17 +1664,41 @@ components:
           items:
             type: string
             example: BRCA1
-      description: |
-        A list of node-symbols for which an action is to be performed (i.e. generate a multi-gene context)
     NetworkOptions:
       type: object
       properties:
         annotation:
-          $ref: '#/components/schemas/AnnotationItem'
+            $ref: '#/components/schemas/AnnotationItem'
         filter:
-          $ref: '#/components/schemas/FilterOptions'
+            $ref: '#/components/schemas/FilterOptions'
     AnnotationItem:
       type: object
+      description: >
+          The fields of the AnnotationItem are used to create annotations in a network as follows:
+          
+          
+          Must provide 
+          
+          - either all fields associated with nodes (nodeAnnotation, nodeAnnotationName)
+          
+          - or all fields associated wth relations (relationAnnotation, relationAnnotationName) 
+          
+          - or both.
+          
+         
+          Fields related to nodes:
+         
+          - nodeAnnotationName denotes the name under which the annotations in the nodeAnnotation field of the request body are attached to nodes
+         
+          - nodeAnnotation is a dictionary of "node-symbol": "annotation" - pairs where node-symbol must match one of the node symbols in the network (see field nodeSymbols in FilterOptions); the annotation is added to the node under the name defined in nodeAnnotationName using the type in nodeAnnotationType
+           
+          
+           
+          Fields related to relations:
+          
+          - relationAnnotationName denotes the name under which the annotations in the relationAnnotation field of the request body are attached to relations
+           
+          - relationAnnotation is a dictionary of "relation-symbol": "annotation" - pairs where realation-symbol must match one of the relation symbols in the network (see field relationSymbols in FilterOptions); the annotation is added to the relation under the name defined in relationAnnotationName using the type in relationAnnotationType
       properties:
         nodeAnnotationName:
           type: string
@@ -1479,37 +1706,43 @@ components:
           example: DriverGene
         nodeAnnotation:
           type: object
+          example: {"BRAF" : true, "BRCA": false}
           additionalProperties:
             oneOf:
-            - type: string
-              example: StringAnnotation
-            - type: boolean
-              example: false
-            - type: number
-              example: 1
-          example:
-            BRAF: true
-            BRCA: false
+              - type: string
+                example: "StringAnnotation"
+              - type: boolean
+                example: false
+              - type: number
+                example: 1.0
         relationAnnotationName:
           type: string
           description: The name of the annotation to be added to relations
           example: traversalScore
         relationAnnotation:
           type: object
+          example: {"BRAF-stimulation->BRCA" : 1, "BRCA-inhibition->BRAF": 5}
           additionalProperties:
             oneOf:
-            - type: string
-              example: StringAnnotation
-            - type: boolean
-              example: false
-            - type: number
-              example: 1
-          example:
-            BRAF-stimulation->BRCA: 1
-            BRCA-inhibition->BRAF: 5
-      description: "The fields of the AnnotationItem are used to create annotations in a network as follows:\n\nMust provide \n- either all fields associated with nodes (nodeAnnotation, nodeAnnotationName)\n- or all fields associated wth relations (relationAnnotation, relationAnnotationName) \n- or both.\n\nFields related to nodes:\n- nodeAnnotationName denotes the name under which the annotations in the nodeAnnotation field of the request body are attached to nodes\n- nodeAnnotation is a dictionary of \"node-symbol\": \"annotation\" - pairs where node-symbol must match one of the node symbols in the network (see field nodeSymbols in FilterOptions); the annotation is added to the node under the name defined in nodeAnnotationName using the type in nodeAnnotationType\n \n\n \nFields related to relations:\n- relationAnnotationName denotes the name under which the annotations in the relationAnnotation field of the request body are attached to relations\n \n- relationAnnotation is a dictionary of \"relation-symbol\": \"annotation\" - pairs where realation-symbol must match one of the relation symbols in the network (see field relationSymbols in FilterOptions); the annotation is added to the relation under the name defined in relationAnnotationName using the type in relationAnnotationType\n"
+              - type: string
+                example: "StringAnnotation"
+              - type: boolean
+                example: false
+              - type: number
+                example: 1.0
     FilterOptions:
       type: object
+      description: >
+          The filterOptions to be used in the step upon creation.
+          
+         
+          - NodeSymbols: Only nodes listed here can be part of the network (and if they match given nodeTypes)
+           
+          - NodeTypes: Only nodes having one of the listed nodesTypes here can be part of the network (and if they are contained in NodeSymbols)
+           
+          - RelationSymbols: Only relations listed here can be part of the network (and if they match given relationTypes)
+           
+          - RelationTypes: Only edges having one of the listed relationTypes here can be part of the network
       properties:
         nodeTypes:
           type: array
@@ -1531,57 +1764,53 @@ components:
           items:
             type: string
             example: BRCA1-stimulation->BRAF
-      description: "The filterOptions to be used in the step upon creation.\n\n- NodeSymbols: Only nodes listed here can be part of the network (and if they match given nodeTypes)\n \n- NodeTypes: Only nodes having one of the listed nodesTypes here can be part of the network (and if they are contained in NodeSymbols)\n \n- RelationSymbols: Only relations listed here can be part of the network (and if they match given relationTypes)\n \n- RelationTypes: Only edges having one of the listed relationTypes here can be part of the network\n"
     PathwayInfoItem:
       type: object
       properties:
         name:
           type: string
           description: The name of the Pathway
-          example: HIF-1 signaling pathway (Homo sapiens (human))
-        KEGGId:
+          example: "HIF-1 signaling pathway (Homo sapiens (human))"
+        KEGGId: 
           type: string
           description: The Kegg pathways identifier
-          example: path_hsa04066
+          example: "path_hsa04066"
         KEGGUrl:
           type: string
-          description: The Url to retrieve the map from KEGG
           format: url
-          example: https://www.kegg.jp/kegg-bin/show_pathway?org_name=hsa&mapno=00620&mapscale=&show_description=show
+          description: The Url to retrieve the map from KEGG
+          example: "https://www.kegg.jp/kegg-bin/show_pathway?org_name=hsa&mapno=00620&mapscale=&show_description=show"
     RelationInfoItem:
       type: object
       properties:
         name:
           type: string
           description: The name of the related gene
-          example: MAP2K
+          example: "MAP2K"
         type:
           type: string
           description: The type of the relation between the two genes
-          example: stimulation
+          example: "stimulation"
         sboTerm:
           type: string
           description: The sboTerm of this relation
-          example: SBO:0000170
+          example: "SBO:0000170"
         direction:
           type: string
           description: The direction of this relation in relation to the parent
-          example: out
-          enum:
-          - in
-          - out
-          - inout
+          enum: ["in", "out", "inout"]
+          example: "out"
     ReactionInfoItem:
       type: object
       properties:
         name:
           type: string
           description: The name of the reaction
-          example: rn:R04125
+          example: "rn:R04125"
         type:
           type: string
           description: The type of the reaction
-          example: biochemical reaction
+          example: "biochemical reaction"
         sboTerm:
           type: string
           description: The SBO Term of the reaction
@@ -1591,7 +1820,7 @@ components:
           example: false
         reactants:
           type: array
-          items:
+          items: 
             $ref: '#/components/schemas/ReactionPartnerItem'
         products:
           type: array
@@ -1601,18 +1830,123 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ReactionPartnerItem'
-    GeneAnalysisItem:
+    ProvenanceInfoItem:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of this provenance-entity
+          example: "MappingNode"
+        contents:
+          oneOf:
+          - $ref: '#/components/schemas/NetworkInventoryItem'
+          - $ref: '#/components/schemas/PathwayInventoryItem'
+          - $ref: '#/components/schemas/PathwayCollectionItem'
+          - $ref: '#/components/schemas/FileInventoryItem'
+          - $ref: '#/components/schemas/DatabaseInventoryItem'
+          discriminator:
+            propertyName: type
+            mapping:
+              Network: '#/components/schemas/NetworkInventoryItem'
+              Pathway: '#/components/schemas/PathwayInventoryItem'
+              PathwayCollection: '#/components/schemas/PathwayCollectionItem'
+              File: '#/components/schemas/FileInventoryItem'
+              Database: '#/components/schemas/DatabaseInventoryItem'
+        wasAttributedTo:
+          $ref: '#/components/schemas/AgentItem'
+        wasGeneratedBy:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityItem'
+        wasDerivedFrom:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProvenanceInfoItem'
+            
+    PathwayCollectionItem:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the pathway collection 
+          example: "ExPC"
+        description:
+          type: string
+          description: A descriptional text for this pathway collection
+          example: "Example pathway collection"
+        hadMember:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ActivityItem:
+      type:  object
+      properties:
+        name: 
+          type: string
+          description: The name of the activity
+          example: "Create_Neighborhood_Network"
+        type:
+          type: string
+          description: The type of the activity
+          example: "createContext"
+        operation:
+          type: string
+          description: The type of REST operation (one of POST, GET, DELETE, PUT)
+          example: "POST"
+        endpoint:
+          type: string
+          description: The endpoint this activity was created by
+          example: "network/d25f4b9-8dd5-4bc3-9d04-9af418302244/context"
+        params:
+          type: array
+          items: 
+            type: object
+            properties:
+              parameter:
+                type: string
+                description: The name of the api-parameter
+                example: "parentUUID"
+              value:
+                type: string
+                description: The value of the api-parameter
+                example: "d25f4b9-8dd5-4bc3-9d04-9af418302244"
+        body:
+          oneOf:
+          - $ref: '#/components/schemas/NodeList'
+          - $ref: '#/components/schemas/PathwayCollectionCreationItem'
+          - $ref: '#/components/schemas/AnnotationItem'
+          - $ref: '#/components/schemas/FilterOptions'
+          - $ref: '#/components/schemas/OverviewNetworkItem'
+        provenance:
+          type: array
+          items: 
+            type: object
+            additionalProperties:
+              type: string
+    AgentItem:
+      type: object
+      properties:
+        name: 
+          type: string
+          description: The name of the agent
+          example: "sbml4j"
+        type:
+          type: string
+          description: The type of the agent
+          example: "User"
+    EntityInfoItem:
       type: object
       properties:
         gene:
           type: string
           description: The gene name this item is for
-          example: BRAF
+          example: "BRAF"
         secondary names:
           type: array
           items:
             type: string
-            example: MAPK21A
+            example: "MAPK21A"
         qualifier:
           type: array
           description: The qualifier of this gene
@@ -1621,18 +1955,35 @@ components:
         pathways:
           type: array
           description: The pathways this gene is found in
-          items:
+          items: 
             $ref: '#/components/schemas/PathwayInfoItem'
         relations:
           type: array
           description: The relations this gene is part of
           items:
-            $ref: '#/components/schemas/RelationInfoItem'
+            $ref: '#/components/schemas/RelationInfoItem' 
         reactions:
           type: array
           description: The reactions this gene is part of
           items:
-            $ref: '#/components/schemas/ReactionInfoItem'
+            $ref: '#/components/schemas/ReactionInfoItem' 
+    IdItem:
+      type: object
+      properties:
+        gene:
+          type: string
+          description: The gene name this item is for
+          example: "BRAF"
+        secondary names:
+          type: array
+          items:
+            type: string
+            example: "MAPK21A"
+        qualifier:
+          type: array
+          description: The qualifier of this gene
+          items:
+            $ref: '#/components/schemas/QualifierItem'
     PathwayCollectionCreationItem:
       type: object
       properties:
@@ -1650,18 +2001,18 @@ components:
           items:
             type: string
             format: uuid
-            example: 0d25f4b9-8dd5-4bc3-9d04-9af418302244
+            example: d25f4b9-8dd5-4bc3-9d04-9af418302244
     ReactionPartnerItem:
       type: object
       properties:
         name:
           type: string
           description: The name of the reaction partner
-          example: C20H22N7O6
+          example: "C20H22N7O6"
         type:
           type: string
           description: The type of the reaction partner
-          example: compound
+          example: "compound"
         sboTerm:
           type: string
           description: The sboTerm of the reaction partner
@@ -1675,30 +2026,26 @@ components:
         content:
           type: array
           items:
-            $ref: '#/components/schemas/QualifierItem_content'
-    body:
-      properties:
-        data:
-          type: array
-          items:
-            type: string
-            format: binary
-    body_1:
-      properties:
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
-    QualifierItem_content:
+            $ref: '#/components/schemas/QualifierItemContent'
+            
+    QualifierItemContent:
       type: object
       properties:
         type:
           type: string
           description: The type of this qualifer
           example: BQB_HAS_VERSION
-        url:
+        values:
           type: array
-          items:
-            type: string
-            format: url
+          items: 
+            $ref: '#/components/schemas/QualifierItemValue'
+    QualifierItemValue:
+      type: object
+      properties:
+        url:
+          type: string
+          format: url
+        identifier:
+          type: string
+          description: The identifier in the given identifier system
+          example: hsa:10152

@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Default volume name should be prefixed with the folder name
-default_volume_prefix="$(echo ${PWD##*/} | tr '[A-Z]' '[a-z]')"
+#default_volume_prefix="$(echo ${PWD##*/} | tr '[A-Z]' '[a-z]')"
+default_volume_prefix="sbml4j-compose"
 # Default api defintion file name
 default_api_def=sbml4j.yaml
 
 function show_usage() {
   echo "Usage: "
-  echo "${0} -h | -b | -i | -a | -r | -p {argument}"
+  echo "${0} -h | -b | -i | -a | -r "
   echo "Details:"
   echo "This script is used to either setup the SBML4J volumes, setup the database from database dumps, or backup the databases into a database dump."
   echo "You can either use any one option alone, or use the -i and -r options together."
@@ -21,9 +22,9 @@ function show_usage() {
   echo "     Used only in conjunction with -i to provide the filename of an alternative api-documentation file, which has to be placed in the api_doc subfolder. "
   echo "  -r {argument} :"
   echo "     Restore the neo4j database from the database dumps in the files with prefix given by the {argument}"
-  echo "  -p {argument} :"
-  echo "     Use {argument} as prefix for the volumes created, i.e. argument_sbml4j_service_vol"
-  echo "     Use in conjuction with the -b, -i, -s flags."
+#  echo "  -p {argument} :"
+#  echo "     Use {argument} as prefix for the volumes created, i.e. argument_sbml4j_service_vol"
+#  echo "     Use in conjuction with the -b, -i, -s flags."
   echo " "
   echo "Examples:"
   echo "${0} -i :"
@@ -37,9 +38,9 @@ function show_usage() {
   echo "   WARNING: Any data currently stored in the database will be overwritten"
   echo "${0} -i -r mydbbackup"
   echo "   This will (re-)create the volumes for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
-  echo "${0} -i -r mydbbackup -p my-compose"
-  echo "   This will (re-)create the volumes with names my-compose_sbml4j_neo4j_vol instead of the default name sbml4j-compose_sbml4j_neo4j_vol for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
-  echo "   This needs to be used when you want to use these volumes in a different compose setup"
+#  echo "${0} -i -r mydbbackup -p my-compose"
+#  echo "   This will (re-)create the volumes with names my-compose_sbml4j_neo4j_vol instead of the default name sbml4j-compose_sbml4j_neo4j_vol for SBML4J (as described above) and load the database backup from the database dunmp files as described above."
+#  echo "   This needs to be used when you want to use these volumes in a different compose setup"
 }
 
 function install() {
@@ -130,9 +131,9 @@ do
           #echo "Performing database setup from file: $backup_name"
           i=i+10
           ;;
-       p) prefix_name=${OPTARG}
-          is_prefix_set=True
-          ;;
+#       p) prefix_name=${OPTARG}
+#          is_prefix_set=True
+#          ;;
    esac
 done
 

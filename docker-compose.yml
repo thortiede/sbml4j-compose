@@ -4,7 +4,7 @@ services:
     image: swaggerapi/swagger-ui
     container_name: sbml4japidoc
     volumes:
-      - sbml4j_api_doc_vol:/definition
+      - sbml4j-compose_sbml4j_api_doc_vol:/definition
     environment:
       - SWAGGER_JSON=/definition/sbml4j.yaml
     ports:
@@ -14,7 +14,7 @@ services:
     image: neo4j:4.1.6
     container_name: sbml4jdb
     volumes:
-      - sbml4j_neo4j_vol:/vol
+      - sbml4j-compose_sbml4j_neo4j_vol:/vol
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -32,10 +32,10 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:1.0.5
+    image: thortiede/sbml4j:1.2.0
     container_name: sbml4j
     volumes:
-      - sbml4j_service_vol:/logs
+      - sbml4j-compose_sbml4j_service_vol:/logs
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - SPRING_DATA_NEO4j_URI=bolt://sbml4jdb:7687
@@ -81,6 +81,9 @@ services:
       - SBML4J_externalresources_biologicalqualifer_default-database=KEGG
       - SBML4J_externalresources_keggdatabase_pathway-link-prefix=https://www.genome.jp/kegg-bin/show_pathway?
       - SBML4J_externalresources_keggdatabase_pathway-search-prefix=https://www.genome.jp/dbget-bin/www_bfind_sub?dbkey=pathway&keywords=
+      - SBML4J_graphml_sbo-string-key=SBOTerm
+      - SBML4J_graphml_species-symbol-key=symbol
+      - SBML4J_graphml_relationship-symbol-key=TransitionId
     depends_on:
       - sbml4jdatabase
       - sbml4j_api_doc
@@ -89,6 +92,9 @@ services:
     restart: on-failure
 
 volumes:
-    sbml4j_service_vol:
-    sbml4j_api_doc_vol:
-    sbml4j_neo4j_vol:
+    sbml4j-compose_sbml4j_service_vol:
+       external: true
+    sbml4j-compose_sbml4j_api_doc_vol:
+       external: true
+    sbml4j-compose_sbml4j_neo4j_vol:
+       external: true
