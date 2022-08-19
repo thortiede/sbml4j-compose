@@ -16,7 +16,8 @@ servers:
 #  - description: SwaggerHub API Auto Mocking
 #    url: https://virtserver.swaggerhub.com/tiede/sbml4j/1.1.7
   - description: University of Tuebingen Demo Server
-    url: https://sbml4j.informatik.uni-tuebingen.de/interactive-api
+    url: http://localhost:12342/sbml4j
+#    url: https://sbml4j.informatik.uni-tuebingen.de/interactive-api
 tags:
   - name: networks
     description: Everything about networks
