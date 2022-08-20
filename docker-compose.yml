@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:1.2.0
+    image: thortiede/sbml4j:1.2.1
     container_name: sbml4j
     volumes:
       - sbml4j-compose_sbml4j_service_vol:/logs
