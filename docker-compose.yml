@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     command: ["neo4j"]
   sbml4j:
-    image: thortiede/sbml4j:1.2.1
+    image: thortiede/sbml4j:1.2.2
     container_name: sbml4j
     volumes:
       - sbml4j-compose_sbml4j_service_vol:/logs
@@ -63,7 +63,7 @@ services:
       - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=True
       - SBML4J_ANNOTATION_APPEND=True
       - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
-      - SBML4J_ANNOTATION_ANNOTATE-WITH-LINKS=True
+      - SBML4J_ANNOTATION_ANNOTATE-WITH-LINKS=False
       - SBML4J_csv_matching-column-name[0]=gene name
       - SBML4J_csv_matching-column-name[1]=genename
       - SBML4J_csv_matching-column-name[2]=gene.name
