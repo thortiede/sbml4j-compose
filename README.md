@@ -15,7 +15,7 @@ We rely on the following docker images to install and run the service:
 3. thortiede/sbml4j:1.0
 
 The SBMl4j service does not come with preloaded models.
-To learn more about how to load a database, check the section below. TODO: Add link to loading.
+To learn more about how to load a database, check the section below.
 
 To learn more about the REST-API endpoints and experiment with them, you can head over to
 http://sbml4j.informatik.uni-tuebingen.de
